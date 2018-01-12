@@ -236,6 +236,7 @@ namespace Torch
                 Directory.CreateDirectory(tempDirectory);
                 config.LoadWorld = null;
                 config.PremadeCheckpointPath = tempDirectory;
+                AppDomain.CurrentDomain.ProcessExit += (sender, ev) => Directory.Delete(tempDirectory);
             }
         }
 
