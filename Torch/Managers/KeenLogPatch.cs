@@ -11,6 +11,10 @@ using Torch.Managers.PatchManager;
 using Torch.Utils;
 using VRage.Utils;
 
+#if MEDIEVAL
+using VRage.Library.Logging;
+#endif
+
 namespace Torch.Managers
 {
     [PatchShim]

@@ -30,7 +30,7 @@ namespace Torch.Utils
         public string[] ParameterNames
         {
             get => Parameters.Select(x => x.AssemblyQualifiedName).ToArray();
-            set => Parameters = value?.Select(x => x == null ? null : Type.GetType(x)).ToArray();
+            set => Parameters = value?.Select(x => Type.GetType(x, true) ?? throw new ArgumentException("Did not find type " + x)).ToArray();
         }
 
         /// <summary>

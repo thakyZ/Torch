@@ -20,7 +20,7 @@ namespace Torch.Utils
         public string TypeName
         {
             get => Type?.AssemblyQualifiedName;
-            set => Type = value == null ? null : Type.GetType(value, true);
+            set => Type = Type.GetType(value, true) ?? throw new ArgumentException("Did not find type " + value);
         }
     }
 }

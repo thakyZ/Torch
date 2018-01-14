@@ -15,7 +15,6 @@ using Torch.API.Session;
 using Torch.Commands.Permissions;
 using Torch.Managers;
 using VRage.Game.ModAPI;
-using Log = NLog.Fluent.Log;
 
 namespace Torch.Commands
 {

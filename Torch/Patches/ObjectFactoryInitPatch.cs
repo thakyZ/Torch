@@ -15,6 +15,10 @@ using VRage.ObjectBuilders;
 using VRage.Plugins;
 using VRage.Utils;
 
+#if MEDIEVAL
+using VRage.Factory;
+#endif
+
 namespace Torch.Patches
 {
 
@@ -31,6 +35,7 @@ namespace Torch.Patches
 
         internal static void ForceRegisterAssemblies()
         {
+#if SPACE
             // static MyEntities() called by MySandboxGame.ForceStaticCtor
             RuntimeHelpers.RunClassConstructor(typeof(MyEntities).TypeHandle);
             {
@@ -53,6 +58,7 @@ namespace Torch.Patches
                 ComponentTypeFactory_RegisterFromAssemblySafe(MyPlugins.SandboxGameAssembly);
                 ComponentTypeFactory_RegisterFromAssemblySafe(MyPlugins.UserAssembly);
             }
+#endif
 
             // static MyObjectPoolManager()
             // Render, so should be fine.
@@ -62,6 +68,7 @@ namespace Torch.Patches
         private static void ObjectFactory_RegisterDescriptorSafe<TAttribute, TCreatedObjectBase>(
             MyObjectFactory<TAttribute, TCreatedObjectBase> factory, TAttribute descriptor, Type type) where TAttribute : MyFactoryTagAttribute where TCreatedObjectBase : class
         {
+#if SPACE
             if (factory.Attributes.TryGetValue(type, out _))
                 return;
             if (descriptor.ObjectBuilderType != null && factory.TryGetProducedType(descriptor.ObjectBuilderType) != null)
@@ -70,6 +77,17 @@ namespace Torch.Patches
                 factory.TryGetProducedType(descriptor.ProducedType) != null)
                 return;
             factory.RegisterDescriptor(descriptor, type);
+#endif
+#if MEDIEVAL
+            if (factory.TryGetAttribute(type, out _))
+                return;
+            if (descriptor.ObjectBuilderType != null && factory.TryGetProducedType(descriptor.ObjectBuilderType, out _))
+                return;
+            if (typeof(MyObjectBuilder_Base).IsAssignableFrom(descriptor.ProducedType) &&
+                factory.TryGetProducedType(descriptor.ProducedType, out _))
+                return;
+            // TODO factory.RegisterDescriptor(descriptor, type);
+#endif
         }
 
         private static void ObjectFactory_RegisterFromAssemblySafe<TAttribute, TCreatedObjectBase>(MyObjectFactory<TAttribute, TCreatedObjectBase> factory, Assembly assembly) where TAttribute : MyFactoryTagAttribute where TCreatedObjectBase : class
@@ -86,8 +104,9 @@ namespace Torch.Patches
                 }
             }
         }
-        #endregion
-        #region MyComponentTypeFactory Adders
+#endregion
+#if SPACE
+#region MyComponentTypeFactory Adders
 
         [ReflectedGetter(Name = "m_idToType", Type = typeof(MyComponentTypeFactory))]
         private static Func<Dictionary<MyStringId, Type>> _componentTypeFactoryIdToType;
@@ -120,6 +139,7 @@ namespace Torch.Patches
             _componentTypeFactoryIdToType()[id] = type;
             _componentTypeFactoryTypeToId()[type] = id;
         }
-        #endregion
+#endregion
+#endif
     }
 }

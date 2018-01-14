@@ -4,10 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NLog;
+#if SPACE
 using SteamSDK;
+#endif
 using VRage.Steam;
 using Sandbox;
 using Sandbox.Engine.Networking;
+#if MEDIEVAL
+using Steamworks;
+#endif
 using Torch.Utils;
 using VRage.GameServices;
 
@@ -24,14 +29,24 @@ namespace Torch
         private static readonly Logger _log = LogManager.GetCurrentClassLogger();
 
 #pragma warning disable 649
+#if SPACE
         [ReflectedSetter(Name = nameof(SteamServerAPI))]
         private static Action<MySteamService, SteamServerAPI> _steamServerAPISetter;
+        [ReflectedSetter(Name = nameof(API))]
+        private static Action<MySteamService, SteamAPI> _steamApiSetter;
+#endif
+#if MEDIEVAL
+        [ReflectedSetter(Name = nameof(MySteamService.Static), Type = typeof(MySteamService))]
+        private static Action<MySteamService> _staticServiceSetter;
+
+
+        [ReflectedSetter(Name = "SteamUserId")]
+        private static Action<MySteamService, Steamworks.CSteamID> _steamworksUserIdSetter;
+#endif
         [ReflectedSetter(Name = "m_gameServer")]
         private static Action<MySteamService, MySteamGameServer> _steamGameServerSetter;
         [ReflectedSetter(Name = nameof(AppId))]
         private static Action<MySteamService, uint> _steamAppIdSetter;
-        [ReflectedSetter(Name = nameof(API))]
-        private static Action<MySteamService, SteamAPI> _steamApiSetter;
         [ReflectedSetter(Name = nameof(IsActive))]
         private static Action<MySteamService, bool> _steamIsActiveSetter;
         [ReflectedSetter(Name = nameof(UserId))]
@@ -55,6 +70,7 @@ namespace Torch
         public SteamService(bool isDedicated, uint appId)
             : base(true, appId)
         {
+#if SPACE
             SteamServerAPI.Instance.Dispose();
             _steamServerAPISetter.Invoke(this, null);
             _steamGameServerSetter.Invoke(this, null);
@@ -88,6 +104,37 @@ namespace Torch
                 } else
                     _log.Warn("SteamService isn't initialized; Torch Client won't start");
             }
+#endif
+#if MEDIEVAL
+            SteamAPI.Shutdown();
+            _steamGameServerSetter.Invoke(this, null);
+            _steamAppIdSetter.Invoke(this, appId);
+            _staticServiceSetter.Invoke(this);
+            if (isDedicated)
+            {
+                _steamGameServerSetter.Invoke(this, new MySteamGameServer());
+            }
+            else
+            {
+                _steamIsActiveSetter.Invoke(this, SteamAPI.Init());
+                if (this.IsActive)
+                {
+                    var userId = SteamUser.GetSteamID();
+                    _steamworksUserIdSetter.Invoke(this, userId);
+                    _steamUserIdSetter.Invoke(this, userId.m_SteamID);
+                    _steamUserNameSetter.Invoke(this, SteamFriends.GetPersonaName());
+                    _steamOwnsGameSetter.Invoke(this, SteamUser.UserHasLicenseForApp(userId, (AppId_t) appId) == Steamworks.EUserHasLicenseForAppResult.k_EUserHasLicenseResultHasLicense);
+                    _steamUserUniverseSetter.Invoke(this, (MyGameServiceUniverse) SteamUtils.GetConnectedUniverse());
+                    _steamBranchNameSetter.Invoke(this, SteamApps.GetCurrentBetaName(out string pchName, 512) ? pchName : "default");
+                    SteamUserStats.RequestCurrentStats();
+
+                    _steamInventoryAPISetter.Invoke(this, new MySteamInventory());
+                    RegisterCallbacks(this);
+                }
+                else
+                    _log.Warn("SteamService isn't initialized; Torch Client won't start");
+            }
+#endif
 
             _steamPeer2PeerSetter.Invoke(this, new MySteamPeer2Peer());
         }

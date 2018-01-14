@@ -152,9 +152,11 @@ namespace Torch.Session
         public override void Attach()
         {
             MySession.OnLoading += SessionLoading;
+#if SPACE
             MySession.AfterLoading += SessionLoaded;
             MySession.OnUnloading += SessionUnloading;
             MySession.OnUnloaded += SessionUnloaded;
+#endif
         }
 
 
@@ -162,9 +164,11 @@ namespace Torch.Session
         public override void Detach()
         {
             MySession.OnLoading -= SessionLoading;
+#if SPACE
             MySession.AfterLoading -= SessionLoaded;
             MySession.OnUnloading -= SessionUnloading;
             MySession.OnUnloaded -= SessionUnloaded;
+#endif
 
             if (_currentSession != null)
             {

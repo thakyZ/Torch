@@ -14,8 +14,6 @@ using Sandbox.Game.Entities.Blocks;
 using Sandbox.Game.Multiplayer;
 using Sandbox.Game.World;
 using Sandbox.ModAPI;
-using SpaceEngineers.Game.Entities.Blocks;
-using SpaceEngineers.Game.ModAPI;
 using Torch.API;
 using Torch.API.Managers;
 using Torch.API.Plugins;
@@ -41,7 +39,7 @@ namespace Torch.Managers
 
         }
 
-        public void ExportGrid(IMyCubeGrid grid, string path)
+        public void ExportGrid(MyCubeGrid grid, string path)
         {
             var ob = grid.GetObjectBuilder(true);
             using (var f = File.Open(path, FileMode.CreateNew))

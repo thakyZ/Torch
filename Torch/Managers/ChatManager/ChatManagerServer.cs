@@ -50,7 +50,7 @@ namespace Torch.Managers.ChatManager
             {
                 if ((targetSteamId == MyGameService.UserId || targetSteamId == 0) && HasHud)
                     MyHud.Chat?.ShowMessage(authorId == MyGameService.UserId ?
-                        (MySession.Static.LocalHumanPlayer?.DisplayName ?? "Player") : $"user_{authorId}", message);
+                        (MySession.Static.LocalHumanPlayer?.Identity?.DisplayName ?? "Player") : $"user_{authorId}", message);
                 return;
             }
             if (MyMultiplayer.Static is MyDedicatedServerBase dedicated)
@@ -72,6 +72,13 @@ namespace Torch.Managers.ChatManager
         private static MethodInfo _dedicatedServerBaseOnChatMessage;
 #pragma warning restore 649
 
+#if MEDIEVAL
+        [ReflectedStaticMethod(Name ="SendChatMessageToClient", Type=typeof(MyMultiplayerBase))]
+        private static Action<string, ulong> _sendChatMessageToClient;
+        [ReflectedStaticMethod(Name = "SendChatMessage", Type = typeof(MyMultiplayerBase))]
+        private static Action<string> _sendChatMessage;
+#endif
+
         /// <inheritdoc />
         public void SendMessageAsOther(string author, string message, string font, ulong targetSteamId = 0)
         {
@@ -83,9 +90,18 @@ namespace Torch.Managers.ChatManager
             if (MyMultiplayer.Static == null)
             {
                 if ((targetSteamId == MyGameService.UserId || targetSteamId == 0) && HasHud)
+                {
+#if SPACE
                     MyHud.Chat?.ShowMessage(author, message, font);
+#endif
+#if MEDIEVAL
+                    MyHud.Chat?.ShowMessage(author, message);
+#endif
+                }
+
                 return;
             }
+#if SPACE
             var scripted = new ScriptedChatMsg()
             {
                 Author = author,
@@ -94,6 +110,13 @@ namespace Torch.Managers.ChatManager
                 Target = Sync.Players.TryGetIdentityId(targetSteamId)
             };
             MyMultiplayerBase.SendScriptedChatMessage(ref scripted);
+#endif
+#if MEDIEVAL
+            if (targetSteamId != 0)
+                _sendChatMessageToClient(message, targetSteamId);
+            else
+                _sendChatMessage(message);
+#endif
         }
 
 

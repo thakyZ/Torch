@@ -11,12 +11,12 @@ using NLog;
 using Sandbox;
 using Sandbox.Engine.Networking;
 using Sandbox.Engine.Platform;
-using SteamSDK;
 using Torch.API;
 using VRage.Game;
 
 namespace Torch
 {
+#if SPACE
     public static class SteamHelper
     {
         private static CancellationTokenSource _tokenSource = new CancellationTokenSource();
@@ -129,4 +129,5 @@ namespace Torch
             return path;
         }
     }
+#endif
 }

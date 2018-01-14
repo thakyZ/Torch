@@ -21,7 +21,6 @@ using Sandbox.Game.Entities.Character;
 using Sandbox.Game.Multiplayer;
 using Sandbox.Game.World;
 using Sandbox.ModAPI;
-using SteamSDK;
 using Torch.API;
 using Torch.API.Managers;
 using Torch.Collections;
@@ -33,8 +32,11 @@ using VRage.Game.ModAPI;
 using VRage.GameServices;
 using VRage.Library.Collections;
 using VRage.Network;
-using VRage.Steam;
 using VRage.Utils;
+#if MEDIEVAL
+using Sandbox.Game.Players;
+using MyPlayerCollection=Sandbox.Game.Players.MyPlayers;
+#endif
 
 namespace Torch.Managers
 {
@@ -73,24 +75,37 @@ namespace Torch.Managers
                 MyMultiplayer.Static.ClientLeft -= OnClientLeft;
         }
 
+        private static MyPlayerCollection PlayerCollection
+        {
+            get
+            {
+#if MEDIEVAL
+                return MyPlayerCollection.Static;
+#endif
+#if SPACE
+return MySession.Static.Players;
+#endif
+            }
+        }
+
         /// <inheritdoc />
         public IMyPlayer GetPlayerByName(string name)
         {
-            return _onlinePlayers.Invoke(MySession.Static.Players).FirstOrDefault(x => x.Value.DisplayName == name).Value;
+            return _onlinePlayers.Invoke(PlayerCollection).FirstOrDefault(x => x.Value?.Identity?.DisplayName == name).Value;
         }
 
         /// <inheritdoc />
         public IMyPlayer GetPlayerBySteamId(ulong steamId)
         {
-            _onlinePlayers.Invoke(MySession.Static.Players).TryGetValue(new MyPlayer.PlayerId(steamId), out MyPlayer p);
+            _onlinePlayers.Invoke(PlayerCollection).TryGetValue(new MyPlayer.PlayerId(steamId), out MyPlayer p);
             return p;
         }
 
         public ulong GetSteamId(long identityId)
         {
-            foreach (KeyValuePair<MyPlayer.PlayerId, MyPlayer> kv in _onlinePlayers.Invoke(MySession.Static.Players))
+            foreach (KeyValuePair<MyPlayer.PlayerId, MyPlayer> kv in _onlinePlayers.Invoke(PlayerCollection))
             {
-                if (kv.Value.Identity.IdentityId == identityId)
+                if (kv.Value.Identity.GetId() == identityId)
                     return kv.Key.SteamId;
             }
 

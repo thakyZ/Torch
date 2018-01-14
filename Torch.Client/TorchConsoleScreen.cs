@@ -41,7 +41,9 @@ namespace Torch.Client
             Controls.Clear();
             _textBox = new MyGuiControlTextbox
             {
+#if SPACE
                 BorderEnabled = false,
+#endif
                 Enabled = true,
                 OriginAlign = MyGuiDrawAlignEnum.HORISONTAL_LEFT_AND_VERTICAL_TOP,
                 Position = new Vector2(-0.5f)

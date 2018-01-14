@@ -8,7 +8,7 @@ using Sandbox.Engine.Multiplayer;
 using Sandbox.Engine.Networking;
 using Sandbox.Engine.Platform;
 using Sandbox.Game;
-using SpaceEngineers.Game;
+using Sandbox.Game.Gui;
 using VRage.Steam;
 using Torch.API;
 using Torch.API.Managers;
@@ -21,13 +21,22 @@ using VRage.FileSystem;
 using VRage.GameServices;
 using VRageRender;
 using VRageRender.ExternalApp;
+#if MEDIEVAL
+using MyMultiplayerClientBase=Sandbox.Engine.Multiplayer.MyMultiplayerClient;
+#endif
 
 namespace Torch.Client
 {
     public class TorchClient : TorchBase, ITorchClient
     {
+#if SPACE
         protected override uint SteamAppId => 244850;
         protected override string SteamAppName => "SpaceEngineers";
+#endif
+#if MEDIEVAL
+        protected override uint SteamAppId => 333950;
+        protected override string SteamAppName => "MedievalEngineers";
+#endif
 
         public TorchClient()
         {
@@ -43,8 +52,8 @@ namespace Torch.Client
 
         public override void Init()
         {
-            Directory.SetCurrentDirectory(Program.SpaceEngineersInstallAlias);
-            MyFileSystem.ExePath = Path.Combine(Program.SpaceEngineersInstallAlias, Program.SpaceEngineersBinaries);
+            Directory.SetCurrentDirectory(Program.InstallAlias);
+            MyFileSystem.ExePath = Path.Combine(Program.InstallAlias, Program.BinariesDirName);
             Log.Info("Initializing Torch Client");
             Config.InstancePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                 SteamAppName);
@@ -57,15 +66,30 @@ namespace Torch.Client
         {
             var credits = new MyCreditsDepartment("Torch Developed By")
             {
+#if SPACE
                 Persons = new List<MyCreditsPerson>
                 {
                     new MyCreditsPerson("THE TORCH TEAM"),
                     new MyCreditsPerson("http://github.com/TorchSE"),
                 }
+#endif
+#if MEDIEVAL
+                SubDepartments = new List<MyCreditsSubDepartment>()
+                {
+                    new MyCreditsSubDepartment("THE TORCH TEAM")
+                    {
+                        Persons = new List<MyCreditsPerson>()
+                        {
+                            new MyCreditsPerson("http://github.com/TorchAPI/")
+                        }
+                    }
+                }
+#endif
             };
             MyPerGameSettings.Credits.Departments.Insert(0, credits);
 
-            MyPerGameSettings.GUI.MainMenu = typeof(TorchMainMenuScreen);
+//            MyPerGameSettings.GUI.MainMenu = typeof(TorchMainMenuScreen);
+            MyGuiScreenMainMenu.CreateNewMainMenuCallback = (x) => new TorchMainMenuScreen(x);
         }
 
         private void SetRenderWindowTitle(string title)

@@ -177,9 +177,16 @@ namespace Torch.Managers.PatchManager
                 _finishedPatchCount = 0;
                 _dirtyPatchCount = _rewritePatterns.Values.Sum(x => x.HasChanged() ? 1 : 0);
 #if true
+#if SPACE
                 ParallelTasks.Parallel.ForEach(_rewritePatterns.Values.Where(x => !x.PrintMsil), DoCommit);
                 foreach (DecoratedMethod m in _rewritePatterns.Values.Where(x => x.PrintMsil))
                     DoCommit(m);
+#endif
+#if MEDIEVAL
+                System.Threading.Tasks.Parallel.ForEach(_rewritePatterns.Values.Where(x => !x.PrintMsil), DoCommit);
+                foreach (DecoratedMethod m in _rewritePatterns.Values.Where(x => x.PrintMsil))
+                    DoCommit(m);
+#endif
 #else
                 foreach (DecoratedMethod m in _rewritePatterns.Values)
                     DoCommit(m);

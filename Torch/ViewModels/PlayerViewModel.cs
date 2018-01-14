@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Sandbox.Engine.Multiplayer;
-using SteamSDK;
+using Sandbox.Engine.Networking;
 using Torch.API;
 using VRage.Replication;
 
@@ -20,7 +20,12 @@ namespace Torch.ViewModels
         public PlayerViewModel(ulong steamId, string name = null)
         {
             SteamId = steamId;
+#if SPACE
             Name = name ?? ((MyDedicatedServerBase)MyMultiplayerMinimalBase.Instance).GetMemberName(steamId);
+#endif
+#if MEDIEVAL
+            Name = name ?? MyGameService.GetPersonaName(steamId);
+#endif
         }
     }
 }

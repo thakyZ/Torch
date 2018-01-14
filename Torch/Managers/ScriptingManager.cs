@@ -9,6 +9,9 @@ using Torch.API.Managers;
 using Torch.API.ModAPI;
 using Torch.API.ModAPI.Ingame;
 using VRage.Scripting;
+#if MEDIEVAL
+using VRage.Scripting.ModAPI;
+#endif
 
 namespace Torch.Managers
 {
@@ -20,7 +23,12 @@ namespace Torch.Managers
         {
             _whitelist = MyScriptCompiler.Static.Whitelist;
             MyScriptCompiler.Static.AddConditionalCompilationSymbols("TORCH");
+#if SPACE
             MyScriptCompiler.Static.AddReferencedAssemblies(typeof(ITorchBase).Assembly.Location);
+#endif
+#if MEDIEVAL
+            MyScriptCompiler.Static.AddReferencedAssemblies(typeof(ITorchBase).Assembly);
+#endif
             MyScriptCompiler.Static.AddImplicitIngameNamespacesFromTypes(typeof(GridExtensions));
 
             using (var whitelist = _whitelist.OpenBatch())

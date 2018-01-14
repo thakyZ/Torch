@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Sandbox.Engine.Networking;
 using Sandbox.Game.Multiplayer;
+using Sandbox.Game.Players;
 using Torch.API;
 using Torch.API.Managers;
 using Torch.API.Plugins;
@@ -26,9 +27,20 @@ namespace Torch.Commands
         /// <summary>
         /// The player who ran the command, or null if the server sent it.
         /// </summary>
-        public IMyPlayer Player => Torch.CurrentSession.KeenSession.Players.TryGetPlayerBySteamId(_steamIdSender);
+        public IMyPlayer Player
+        {
+            get
+            {
+#if SPACE
+                return Torch.CurrentSession.KeenSession.Players.TryGetPlayerBySteamId(_steamIdSender);
+#endif
+#if MEDIEVAL
+                return Sandbox.Game.Players.MyPlayers.Static.GetPlayer(new MyPlayer.PlayerId(_steamIdSender, 0));
+#endif
+            }
+        }
 
-        /// <summary>
+    /// <summary>
         /// Was this message sent by this program.
         /// </summary>
         public bool SentBySelf => _steamIdSender == Sync.MyId;

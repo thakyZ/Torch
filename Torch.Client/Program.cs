@@ -16,26 +16,34 @@ namespace Torch.Client
 {
     public static class Program
     {
-        public const string SpaceEngineersBinaries = "Bin64";
-        private static string _spaceEngInstallAlias = null;
+#if SPACE
+        private const string InstallAliasName = "SpaceEngineersAlias";
+        private const string ProgramName = "SpaceEngineers";
+#endif
+#if MEDIEVAL
+        private const string InstallAliasName = "MedievalEngineersAlias";
+        private const string ProgramName = "MedievalEngineers";
+#endif
+        public const string BinariesDirName = "Bin64";
+        private static string _installAlias = null;
 
-        public static string SpaceEngineersInstallAlias
+        public static string InstallAlias
         {
             get
             {
                 // ReSharper disable once ConvertIfStatementToNullCoalescingExpression
-                if (_spaceEngInstallAlias == null)
+                if (_installAlias == null)
                 {
                     // ReSharper disable once AssignNullToNotNullAttribute
-                    _spaceEngInstallAlias = Path.Combine(Path.GetDirectoryName(typeof(Program).Assembly.Location),
-                        "SpaceEngineersAlias");
+                    _installAlias = Path.Combine(Path.GetDirectoryName(typeof(Program).Assembly.Location),
+                        InstallAliasName);
                 }
-                return _spaceEngInstallAlias;
+                return _installAlias;
             }
         }
 
-        private const string _steamSpaceEngineersDirectory = @"steamapps\common\SpaceEngineers\";
-        private const string _spaceEngineersVerifyFile = SpaceEngineersBinaries + @"\SpaceEngineers.exe";
+        private static readonly string _steamDirectory = $"steamapps\\common\\{ProgramName}\\";
+        private static readonly string _steamVerifyFile = BinariesDirName + $"\\{ProgramName}.exe";
 
         public const string ConfigName = "Torch.cfg";
 
@@ -58,12 +66,12 @@ namespace Torch.Client
                 {
                     AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
-                    // Early config: Resolve SE install directory.
-                    if (!File.Exists(Path.Combine(SpaceEngineersInstallAlias, _spaceEngineersVerifyFile)))
-                        SetupSpaceEngInstallAlias();
+                    // Early config: Resolve install directory.
+                    if (!File.Exists(Path.Combine(InstallAlias, _steamVerifyFile)))
+                        SetupInstallAlias();
 
                     TorchLauncher.Launch(Assembly.GetEntryAssembly().FullName, args,
-                        Path.Combine(SpaceEngineersInstallAlias, SpaceEngineersBinaries));
+                        Path.Combine(InstallAlias, BinariesDirName));
                     return;
                 }
 
@@ -77,9 +85,9 @@ namespace Torch.Client
 #endif
         }
 
-        private static void SetupSpaceEngInstallAlias()
+        private static void SetupInstallAlias()
         {
-            string spaceEngineersDirectory = null;
+            string installDirectory = null;
 
             // TODO look at Steam/config/Config.VDF?  Has alternate directories.
             var steamDir =
@@ -87,50 +95,50 @@ namespace Torch.Client
                     null) as string;
             if (steamDir != null)
             {
-                spaceEngineersDirectory = Path.Combine(steamDir, _steamSpaceEngineersDirectory);
+                installDirectory = Path.Combine(steamDir, _steamDirectory);
                 // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                if (File.Exists(Path.Combine(spaceEngineersDirectory, _spaceEngineersVerifyFile)))
-                    _log.Debug("Found Space Engineers in {0}", spaceEngineersDirectory);
+                if (File.Exists(Path.Combine(installDirectory, _steamVerifyFile)))
+                    _log.Debug("Found "+ ProgramName+" in {0}", installDirectory);
                 else
                 {
-                    _log.Debug("Couldn't find Space Engineers in {0}", spaceEngineersDirectory);
-                    spaceEngineersDirectory = null;
+                    _log.Debug("Couldn't find  " + ProgramName + " in {0}", installDirectory);
+                    installDirectory = null;
                 }
             }
-            if (spaceEngineersDirectory == null)
+            if (installDirectory == null)
             {
                 var dialog = new System.Windows.Forms.FolderBrowserDialog
                 {
-                    Description = "Please select the SpaceEngineers installation folder"
+                    Description = "Please select the "+ProgramName+" installation folder"
                 };
                 do
                 {
                     if (dialog.ShowDialog() != DialogResult.OK)
                     {
                         var ex = new FileNotFoundException(
-                            "Unable to find the Space Engineers install directory, aborting");
+                            "Unable to find the " + ProgramName + " install directory, aborting");
                         _log.Fatal(ex);
                         LogManager.Flush();
                         throw ex;
                     }
-                    spaceEngineersDirectory = dialog.SelectedPath;
-                    if (File.Exists(Path.Combine(spaceEngineersDirectory, _spaceEngineersVerifyFile)))
+                    installDirectory = dialog.SelectedPath;
+                    if (File.Exists(Path.Combine(installDirectory, _steamVerifyFile)))
                         break;
                     if (MessageBox.Show(
-                            $"Unable to find {0} in {1}.  Are you sure it's the Space Engineers install directory?",
-                            "Invalid Space Engineers Directory", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                            $"Unable to find {0} in {1}.  Are you sure it's the " + ProgramName + " install directory?",
+                            "Invalid " + ProgramName + " Directory", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                         break;
                 } while (true); // Repeat until they confirm.
             }
-            if (!JunctionLink(SpaceEngineersInstallAlias, spaceEngineersDirectory))
+            if (!JunctionLink(InstallAlias, installDirectory))
             {
                 var ex = new IOException(
-                    $"Failed to create junction link {SpaceEngineersInstallAlias} => {spaceEngineersDirectory}. Aborting.");
+                    $"Failed to create junction link {InstallAlias} => {installDirectory}. Aborting.");
                 _log.Fatal(ex);
                 LogManager.Flush();
                 throw ex;
             }
-            string junctionVerify = Path.Combine(SpaceEngineersInstallAlias, _spaceEngineersVerifyFile);
+            string junctionVerify = Path.Combine(InstallAlias, _steamVerifyFile);
             if (!File.Exists(junctionVerify))
             {
                 var ex = new FileNotFoundException(

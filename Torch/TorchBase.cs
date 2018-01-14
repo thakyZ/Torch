@@ -24,8 +24,6 @@ using Sandbox.Game.Screens.Helpers;
 using Sandbox.Game.World;
 using Sandbox.Graphics.GUI;
 using Sandbox.ModAPI;
-using SpaceEngineers.Game;
-using SpaceEngineers.Game.GUI;
 using Torch.API;
 using Torch.API.Managers;
 using Torch.API.ModAPI;
@@ -44,7 +42,6 @@ using VRage.FileSystem;
 using VRage.Game;
 using VRage.Game.Common;
 using VRage.Game.Components;
-using VRage.Game.ObjectBuilder;
 using VRage.Game.SessionComponents;
 using VRage.GameServices;
 using VRage.Library;
@@ -214,7 +211,7 @@ namespace Torch
             return Thread.CurrentThread.ManagedThreadId == MySandboxGame.Static.UpdateThread.ManagedThreadId;
         }
 
-        #region Game Actions
+#region Game Actions
 
         /// <summary>
         /// Invokes an action on the game thread.
@@ -326,14 +323,29 @@ namespace Torch
         public virtual void Init()
         {
             Debug.Assert(!_init, "Torch instance is already initialized.");
+#if SPACE
             SpaceEngineersGame.SetupBasicGameInfo();
             SpaceEngineersGame.SetupPerGameSettings();
+#endif
+#if MEDIEVAL
+            string appDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), SteamAppName);
+            string fullName = Path.GetDirectoryName(typeof(MySandboxGame).Assembly.Location);
+            string contentPath = Path.Combine(fullName, "Content");
+            MyFileSystem.Init(contentPath, appDataPath, "Mods", false);
+            Medieval.MyMedievalGame.SetupBasicGameInfo();
+            Medieval.MyMedievalGame.SetupPerGameSettings();
+#endif
             ObjectFactoryInitPatch.ForceRegisterAssemblies();
 
             Debug.Assert(MyPerGameSettings.BasicGameInfo.GameVersion != null,
                 "MyPerGameSettings.BasicGameInfo.GameVersion != null");
+#if SPACE
             GameVersion = new Version(new MyVersion(MyPerGameSettings.BasicGameInfo.GameVersion.Value).FormattedText
                 .ToString().Replace("_", "."));
+#endif
+#if MEDIEVAL
+            GameVersion = MyPerGameSettings.BasicGameInfo.GameVersion;
+#endif
             try
             {
                 Console.Title = $"{Config.InstanceName} - Torch {TorchVersion}, SE {GameVersion}";

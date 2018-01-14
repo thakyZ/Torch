@@ -121,7 +121,12 @@ namespace Torch.Managers
                 //pass the message back to the game server
                 try
                 {
+#if SPACE
                     ((MyReplicationLayer)MyMultiplayer.ReplicationLayer).OnEvent(packet);
+#endif
+#if MEDIEVAL
+                    ((MyReplicationLayer)MyMultiplayer.ReplicationLayer).ProcessEvent(packet);
+#endif
                 }
                 catch (Exception ex)
                 {
@@ -178,7 +183,14 @@ namespace Torch.Managers
                 try
                 {
                     if (handler.CanHandle(site))
+                    {
+#if SPACE
                         discard |= handler.Handle(packet.Sender.Id.Value, site, stream, obj, packet);
+#endif
+#if MEDIEVAL
+                        discard |= handler.Handle(packet.Sender.Value, site, stream, obj, packet);
+#endif
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -194,7 +206,12 @@ namespace Torch.Managers
             //pass the message back to the game server
             try
             {
+#if SPACE
                 ((MyReplicationLayer)MyMultiplayer.ReplicationLayer).OnEvent(packet);
+#endif
+#if MEDIEVAL
+                ((MyReplicationLayer)MyMultiplayer.ReplicationLayer).ProcessEvent(packet);
+#endif
             }
             catch (Exception ex)
             {
@@ -239,9 +256,9 @@ namespace Torch.Managers
                 RegisterNetworkHandler(handler);
         }
 
-        #endregion
+#endregion
 
-        #region Network Injection
+#region Network Injection
 
 
         /// <summary>
@@ -377,6 +394,6 @@ namespace Torch.Managers
             return result;
         }
 
-        #endregion
+#endregion
     }
 }

@@ -36,6 +36,7 @@ namespace Torch.Managers.ChatManager
         {
             if (MyMultiplayer.Static != null)
             {
+#if SPACE
                 if (Sandbox.Engine.Platform.Game.IsDedicated)
                 {
                     var scripted = new ScriptedChatMsg()
@@ -48,15 +49,19 @@ namespace Torch.Managers.ChatManager
                     MyMultiplayerBase.SendScriptedChatMessage(ref scripted);
                 }
                 else
+#endif
+                {
                     MyMultiplayer.Static.SendChatMessage(message);
+                }
             }
             else if (HasHud)
-                MyHud.Chat.ShowMessage(MySession.Static.LocalHumanPlayer?.DisplayName ?? "Player", message);
+                MyHud.Chat.ShowMessage(MySession.Static.LocalHumanPlayer?.Identity?.DisplayName ?? "Player", message);
         }
 
         /// <inheritdoc />
         public void DisplayMessageOnSelf(string author, string message, string font)
         {
+#if SPACE
             if (HasHud)
                 MyHud.Chat?.ShowMessage(author, message, font);
             MySession.Static.GlobalChatHistory.GlobalChatHistory.Chat.Enqueue(new MyGlobalChatItem()
@@ -65,6 +70,11 @@ namespace Torch.Managers.ChatManager
                 AuthorFont = font,
                 Text = message
             });
+#endif
+#if MEDIEVAL
+            if (HasHud)
+                Sandbox.Game.Gui.MyHud.Chat?.ShowMessage(author, message);
+#endif
         }
 
         /// <inheritdoc/>
@@ -75,11 +85,13 @@ namespace Torch.Managers.ChatManager
             if (MyMultiplayer.Static != null)
             {
                 _chatMessageRecievedReplacer = _chatMessageReceivedFactory.Invoke();
-                _scriptedChatMessageRecievedReplacer = _scriptedChatMessageReceivedFactory.Invoke();
                 _chatMessageRecievedReplacer.Replace(new Action<ulong, string>(Multiplayer_ChatMessageReceived),
                     MyMultiplayer.Static);
+#if SPACE
+                _scriptedChatMessageRecievedReplacer = _scriptedChatMessageReceivedFactory.Invoke();
                 _scriptedChatMessageRecievedReplacer.Replace(
                     new Action<string, string, string>(Multiplayer_ScriptedChatMessageReceived), MyMultiplayer.Static);
+#endif
             }
             else
             {
@@ -93,8 +105,10 @@ namespace Torch.Managers.ChatManager
             MyAPIUtilities.Static.MessageEntered -= OnMessageEntered;
             if (_chatMessageRecievedReplacer != null && _chatMessageRecievedReplacer.Replaced && HasHud)
                 _chatMessageRecievedReplacer.Restore(MyHud.Chat);
+#if SPACE
             if (_scriptedChatMessageRecievedReplacer != null && _scriptedChatMessageRecievedReplacer.Replaced && HasHud)
                 _scriptedChatMessageRecievedReplacer.Restore(MyHud.Chat);
+#endif
             MyAPIUtilities.Static.MessageEntered -= OfflineMessageReciever;
             base.Detach();
         }
@@ -113,7 +127,7 @@ namespace Torch.Managers.ChatManager
         {
             if (!sendToOthers)
                 return;
-            var torchMsg = new TorchChatMessage(MySession.Static.LocalHumanPlayer?.DisplayName ?? "Player", Sync.MyId, messageText);
+            var torchMsg = new TorchChatMessage(MySession.Static.LocalHumanPlayer?.Identity?.DisplayName ?? "Player", Sync.MyId, messageText);
             bool consumed = RaiseMessageRecieved(torchMsg);
             if (!consumed)
                 consumed = OfflineMessageProcessor(torchMsg);
@@ -164,10 +178,12 @@ namespace Torch.Managers.ChatManager
 
         [ReflectedEventReplace(typeof(MyMultiplayerBase), nameof(MyMultiplayerBase.ChatMessageReceived), typeof(MyHudChat), _hudChatMessageReceivedName)]
         private static Func<ReflectedEventReplacer> _chatMessageReceivedFactory;
+        private ReflectedEventReplacer _chatMessageRecievedReplacer;
+
+#if SPACE
         [ReflectedEventReplace(typeof(MyMultiplayerBase), nameof(MyMultiplayerBase.ScriptedChatMessageReceived), typeof(MyHudChat), _hudChatScriptedMessageReceivedName)]
         private static Func<ReflectedEventReplacer> _scriptedChatMessageReceivedFactory;
-
-        private ReflectedEventReplacer _chatMessageRecievedReplacer;
         private ReflectedEventReplacer _scriptedChatMessageRecievedReplacer;
+#endif
     }
 }
