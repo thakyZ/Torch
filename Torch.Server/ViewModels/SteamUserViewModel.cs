@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+#if SPACE
 using SteamSDK;
+#endif
 
 namespace Torch.Server.ViewModels
 {
+#if SPACE
     public class SteamUserViewModel : ViewModel
     {
         public string Name { get; }
@@ -20,4 +23,5 @@ namespace Torch.Server.ViewModels
 
         public SteamUserViewModel() : this(0) { }
     }
+#endif
 }

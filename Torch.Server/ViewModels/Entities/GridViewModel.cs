@@ -10,6 +10,10 @@ using Torch.API.Managers;
 using Torch.Collections;
 using Torch.Server.ViewModels.Blocks;
 using VRage.Game;
+#if MEDIEVAL
+using VRage.Definitions.Cube;
+using MyTerminalBlock = Sandbox.Game.Entities.MyCubeBlock;
+#endif
 
 namespace Torch.Server.ViewModels.Entities
 {
@@ -79,7 +83,7 @@ namespace Torch.Server.ViewModels.Entities
             if (group.Remove(block.EntityId) && group.Count == 0 && Blocks.Count > 1)
                 Blocks.Remove(block.BlockDefinition);
         }
-
+        
         private void AddBlock(MyTerminalBlock block)
         {
             if (!Blocks.TryGetValue(block.BlockDefinition, out var group))

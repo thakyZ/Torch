@@ -11,6 +11,7 @@ using VRage.Game.ModAPI;
 using VRage.ModAPI;
 using System.Windows.Threading;
 using NLog;
+using Sandbox.Game.EntityComponents.Character;
 using Torch.Collections;
 
 namespace Torch.Server.ViewModels
@@ -60,9 +61,16 @@ namespace Torch.Server.ViewModels
                     case MyCubeGrid grid:
                         Grids.Remove(grid.EntityId);
                         break;
+#if SPACE
                     case MyCharacter character:
                         Characters.Remove(character.EntityId);
                         break;
+#endif
+#if MEDIEVAL
+                    case var copy when obj.Components.Get<MyCharacterMovementComponent>() != null:
+                        Characters.Remove(copy.EntityId);
+                        break;
+#endif
                     case MyFloatingObject floating:
                         FloatingObjects.Remove(floating.EntityId);
                         break;
@@ -87,9 +95,16 @@ namespace Torch.Server.ViewModels
                     case MyCubeGrid grid:
                         Grids.Add(obj.EntityId, new GridViewModel(grid, this));
                         break;
+#if SPACE
                     case MyCharacter character:
                         Characters.Add(obj.EntityId, new CharacterViewModel(character, this));
                         break;
+#endif
+#if MEDIEVAL
+                    case var copy when obj.Components.Get<MyCharacterMovementComponent>() != null:
+                        Characters.Add(copy.EntityId, new CharacterViewModel(copy, this));
+                        break;
+#endif
                     case MyFloatingObject floating:
                         FloatingObjects.Add(obj.EntityId, new FloatingObjectViewModel(floating, this));
                         break;

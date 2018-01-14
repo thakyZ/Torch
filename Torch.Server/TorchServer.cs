@@ -18,7 +18,6 @@ using NLog;
 using Sandbox.Engine.Analytics;
 using Sandbox.Game.Multiplayer;
 using Sandbox.ModAPI;
-using SteamSDK;
 using Torch.API;
 using Torch.API.Managers;
 using Torch.API.Session;
@@ -29,7 +28,6 @@ using VRage.Dedicated;
 using VRage.FileSystem;
 using VRage.Game;
 using VRage.Game.ModAPI;
-using VRage.Game.ObjectBuilder;
 using VRage.Game.SessionComponents;
 using VRage.Library;
 using VRage.ObjectBuilders;
@@ -118,11 +116,20 @@ namespace Torch.Server
             sessionManager.AddFactory((x) => new MultiplayerManagerDedicated(this));
         }
 
+#if SPACE
         /// <inheritdoc/>
         protected override uint SteamAppId => 244850;
 
         /// <inheritdoc/>
         protected override string SteamAppName => "SpaceEngineersDedicated";
+#endif
+#if MEDIEVAL
+        /// <inheritdoc/>
+        protected override uint SteamAppId => 367970;
+
+        /// <inheritdoc/>
+        protected override string SteamAppName => "MedievalEngineersDedicated";
+#endif
 
         /// <inheritdoc />
         public override void Init()
@@ -228,7 +235,7 @@ namespace Torch.Server
             }
         }
 
-        #region Freeze Detection
+#region Freeze Detection
 
         private static void CheckServerResponding(object state)
         {
@@ -300,6 +307,6 @@ namespace Torch.Server
             return stack;
         }
 
-        #endregion
+#endregion
     }
 }

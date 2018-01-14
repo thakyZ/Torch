@@ -32,12 +32,14 @@ namespace Torch.Server.Views.Blocks
         {
             switch (args.NewValue)
             {
+#if SPACE
                 case PropertyViewModel<bool> _:
                     InitBool();
                     break;
                 case PropertyViewModel<StringBuilder> _:
                     InitStringBuilder();
                     break;
+#endif
                 default:
                     InitDefault();
                     break;

@@ -41,7 +41,12 @@ namespace Torch.Server.Managers
             MyFileSystem.Reset();
             MyFileSystem.Init("Content", path);
             //Initializes saves path. Why this isn't in Init() we may never know.
+#if SPACE
             MyFileSystem.InitUserSpecific(null);
+#endif
+#if MEDIEVAL
+            MyLocalCache.SavesPath = Path.Combine(MyFileSystem.UserDataPath, "Saves");
+#endif
 
             var configPath = Path.Combine(path, CONFIG_NAME);
             if (!File.Exists(configPath))
@@ -102,8 +107,14 @@ namespace Torch.Server.Managers
                 }
 
                 var sb = new StringBuilder();
+#if SPACE
                 foreach (var mod in checkpoint.Mods)
                     sb.AppendLine(mod.PublishedFileId.ToString());
+#endif
+#if MEDIEVAL
+                foreach (var mod in checkpoint.ModSetup.Mods)
+                    sb.AppendLine(mod.PublishedFileId.ToString());
+#endif
 
                 DedicatedConfig.Mods = sb.ToString();
 
@@ -133,9 +144,16 @@ namespace Torch.Server.Managers
                     return;
                 }
                 checkpoint.Settings = DedicatedConfig.SessionSettings;
+#if SPACE
                 checkpoint.Mods.Clear();
                 foreach (var modId in DedicatedConfig.Model.Mods)
                     checkpoint.Mods.Add(new MyObjectBuilder_Checkpoint.ModItem(modId));
+#endif
+#if MEDIEVAL
+                checkpoint.ModSetup.Mods.Clear();
+                foreach (var modId in DedicatedConfig.Model.Mods)
+                    checkpoint.ModSetup.Mods.Add(new SerializableModReference(modId));
+#endif
 
                 MyLocalCache.SaveCheckpoint(checkpoint, DedicatedConfig.LoadWorld);
                 Log.Info("Saved world config.");

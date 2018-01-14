@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Sandbox.ModAPI;
+#if SPACE
 using Sandbox.ModAPI.Interfaces;
 
 namespace Torch.Server.ViewModels.Blocks
@@ -45,3 +46,4 @@ namespace Torch.Server.ViewModels.Blocks
         }
     }
 }
+#endif

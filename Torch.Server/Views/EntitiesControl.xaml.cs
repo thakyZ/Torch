@@ -58,14 +58,18 @@ namespace Torch.Server.Views
 
         private void Delete_OnClick(object sender, RoutedEventArgs e)
         {
+#if SPACE
             if (Entities.CurrentEntity?.Entity is IMyCharacter)
                 return;
+#endif
             TorchBase.Instance.Invoke(() => Entities.CurrentEntity?.Delete());
         }
 
         private void Stop_OnClick(object sender, RoutedEventArgs e)
         {
+#if SPACE
             TorchBase.Instance.Invoke(() => Entities.CurrentEntity?.Entity.Physics?.ClearSpeed());
+#endif
         }
 
         private void TreeViewItem_OnExpanded(object sender, RoutedEventArgs e)

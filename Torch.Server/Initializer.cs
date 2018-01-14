@@ -23,10 +23,18 @@ namespace Torch.Server
         private const string STEAMCMD_ZIP = "temp.zip";
         private static readonly string STEAMCMD_PATH = $"{STEAMCMD_DIR}\\steamcmd.exe";
         private static readonly string RUNSCRIPT_PATH = $"{STEAMCMD_DIR}\\runscript.txt";
+#if MEDIEVAL
+        private const string RUNSCRIPT = @"force_install_dir ../
+login anonymous
+app_update 367970
+quit";
+#endif
+#if SPACE
         private const string RUNSCRIPT = @"force_install_dir ../
 login anonymous
 app_update 298740
 quit";
+#endif
 
         private TorchConfig _config;
         private TorchServer _server;

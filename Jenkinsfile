@@ -24,8 +24,10 @@ node {
 
 	stage('Acquire SE') {
 		bat 'powershell -File Jenkins/jenkins-grab-se.ps1'
-		bat 'IF EXIST GameBinaries RMDIR GameBinaries'
-		bat 'mklink /J GameBinaries "C:/Steam/Data/DedicatedServer64/"'		
+		bat 'IF EXIST SeBinaries RMDIR SeBinaries'
+		bat 'mklink /J SeBinaries "C:/Steam/Data/SE/DedicatedServer64/"'		
+		bat 'IF EXIST MeBinaries RMDIR MeBinaries'
+		bat 'mklink /J MeBinaries "C:/Steam/Data/ME/DedicatedServer64/"'
 	}
 
 	stage('Acquire NuGet Packages') {
@@ -35,9 +37,9 @@ node {
 	stage('Build') {
 		currentBuild.description = bat(returnStdout: true, script: '@powershell -File Versioning/version.ps1').trim()
 		if (env.BRANCH_NAME == "master") {
-			buildMode = "Release"
+			buildMode = "Release_ME"
 		} else {
-			buildMode = "Debug"
+			buildMode = "Debug_ME"
 		}
 		bat "IF EXIST \"bin\" rmdir /Q /S \"bin\""
 		bat "IF EXIST \"bin-test\" rmdir /Q /S \"bin-test\""

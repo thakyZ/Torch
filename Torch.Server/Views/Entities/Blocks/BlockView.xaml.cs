@@ -14,7 +14,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Sandbox.ModAPI;
-using Sandbox.ModAPI.Interfaces;
 using Torch.Server.ViewModels.Blocks;
 using VRage.Game.ModAPI;
 

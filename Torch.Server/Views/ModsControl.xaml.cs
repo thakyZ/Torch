@@ -10,13 +10,10 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Sandbox.Engine.Networking;
-using SteamSDK;
 using VRage.Game;
+#if SPACE
+using SteamSDK;
+#endif
 
 namespace Torch.Server
 {
@@ -45,6 +42,7 @@ namespace Torch.Server
                 mods = dialog.Result;
             }
 
+#if SPACE
             foreach (var id in mods)
             {
                 var details = SteamHelper.GetItemDetails(id);
@@ -55,6 +53,7 @@ namespace Torch.Server
                 var desc = details.Description.Length < 500 ? details.Description : details.Description.Substring(0, 500);
                 ModList.Items.Add(new ModViewModel(item, desc));
             }
+#endif
         }
 
         private void modList_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)

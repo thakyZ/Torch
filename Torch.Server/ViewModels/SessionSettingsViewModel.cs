@@ -32,13 +32,15 @@ namespace Torch.Server.ViewModels
         public SessionSettingsViewModel(MyObjectBuilder_SessionSettings settings)
         {
             _settings = settings;
+#if SPACE
             foreach (var limit in settings.BlockTypeLimits.Dictionary)
                 BlockLimits.Add(new BlockLimitViewModel(this, limit.Key, limit.Value));
+#endif
         }
 
         public MtObservableList<BlockLimitViewModel> BlockLimits { get; } = new MtObservableList<BlockLimitViewModel>();
 
-        #region Multipliers
+#region Multipliers
 
         /// <inheritdoc cref="MyObjectBuilder_SessionSettings.InventorySizeMultiplier"/>
         public float InventorySizeMultiplier
@@ -46,6 +48,7 @@ namespace Torch.Server.ViewModels
             get => _settings.InventorySizeMultiplier; set { _settings.InventorySizeMultiplier = value; OnPropertyChanged(); }
         }
 
+#if SPACE
         /// <inheritdoc cref="MyObjectBuilder_SessionSettings.RefinerySpeedMultiplier"/>
         public float RefinerySpeedMultiplier
         {
@@ -81,10 +84,11 @@ namespace Torch.Server.ViewModels
         {
             get => _settings.WelderSpeedMultiplier; set { _settings.WelderSpeedMultiplier = value; OnPropertyChanged(); }
         }
+#endif
         #endregion
 
         #region NPCs
-
+#if SPACE
         /// <inheritdoc cref="MyObjectBuilder_SessionSettings.EnableDrones"/>
         public bool EnableDrones
         {
@@ -114,6 +118,7 @@ namespace Torch.Server.ViewModels
         {
             get => _settings.CargoShipsEnabled; set { _settings.CargoShipsEnabled = value; OnPropertyChanged(); }
         }
+#endif
         #endregion
 
         #region Environment
@@ -123,7 +128,7 @@ namespace Torch.Server.ViewModels
         {
             get => _settings.EnableSunRotation; set { _settings.EnableSunRotation = value; OnPropertyChanged(); }
         }
-
+#if SPACE
         /// <inheritdoc cref="MyObjectBuilder_SessionSettings.EnableOxygenPressurization"/>
         public bool EnableAirtightness
         {
@@ -135,25 +140,27 @@ namespace Torch.Server.ViewModels
         {
             get => _settings.EnableOxygen; set { _settings.EnableOxygen = value; OnPropertyChanged(); }
         }
+#endif
 
         /// <inheritdoc cref="MyObjectBuilder_SessionSettings.DestructibleBlocks"/>
         public bool EnableDestructibleBlocks
         {
             get => _settings.DestructibleBlocks; set { _settings.DestructibleBlocks = value; OnPropertyChanged(); }
         }
-
+#if SPACE
         /// <inheritdoc cref="MyObjectBuilder_SessionSettings.EnableToolShake"/>
         public bool EnableToolShake
         {
             get => _settings.EnableToolShake; set { _settings.EnableToolShake = value; OnPropertyChanged(); }
         }
+#endif
 
         /// <inheritdoc cref="MyObjectBuilder_SessionSettings.EnableVoxelDestruction"/>
         public bool EnableVoxelDestruction
         {
             get => _settings.EnableVoxelDestruction; set { _settings.EnableVoxelDestruction = value; OnPropertyChanged(); }
         }
-
+#if SPACE
         /// <summary>
         /// List used to populate the environment hostility combo box.
         /// </summary>
@@ -170,6 +177,7 @@ namespace Torch.Server.ViewModels
         {
             get => _settings.EnableFlora; set { _settings.EnableFlora = value; OnPropertyChanged(); }
         }
+#endif
         #endregion
 
         /// <summary>
@@ -183,11 +191,13 @@ namespace Torch.Server.ViewModels
             get => _settings.GameMode.ToString(); set { Enum.TryParse(value, true, out _settings.GameMode); OnPropertyChanged(); }
         }
 
+#if SPACE
         /// <inheritdoc cref="MyObjectBuilder_SessionSettings.AutoHealing"/>
         public bool EnableAutoHealing
         {
             get => _settings.AutoHealing; set { _settings.AutoHealing = value; OnPropertyChanged(); }
         }
+#endif
 
         /// <inheritdoc cref="MyObjectBuilder_SessionSettings.EnableCopyPaste"/>
         public bool EnableCopyPaste
@@ -213,11 +223,13 @@ namespace Torch.Server.ViewModels
             get => _settings.EnableSpectator; set { _settings.EnableSpectator = value; OnPropertyChanged(); }
         }
 
+#if SPACE
         /// <inheritdoc cref="MyObjectBuilder_SessionSettings.SpawnWithTools"/>
         public bool SpawnWithTools
         {
             get => _settings.SpawnWithTools; set { _settings.SpawnWithTools = value; OnPropertyChanged(); }
         }
+#endif
 
         /// <inheritdoc cref="MyObjectBuilder_SessionSettings.EnableConvertToStation"/>
         public bool EnableConvertToStation
@@ -225,6 +237,7 @@ namespace Torch.Server.ViewModels
             get => _settings.EnableConvertToStation; set { _settings.EnableConvertToStation = value; OnPropertyChanged(); }
         }
 
+#if SPACE
         /// <inheritdoc cref="MyObjectBuilder_SessionSettings.EnableJetpack"/>
         public bool EnableJetpack
         {
@@ -284,6 +297,7 @@ namespace Torch.Server.ViewModels
         {
             get => _settings.EnableIngameScripts; set { _settings.EnableIngameScripts = value; OnPropertyChanged(); }
         }
+#endif
 
         /// <inheritdoc cref="MyObjectBuilder_SessionSettings.AutoSaveInMinutes"/>
         public uint AutosaveInterval
@@ -291,6 +305,7 @@ namespace Torch.Server.ViewModels
             get => _settings.AutoSaveInMinutes; set { _settings.AutoSaveInMinutes = value; OnPropertyChanged(); }
         }
 
+#if SPACE
         /// <inheritdoc cref="MyObjectBuilder_SessionSettings.FloraDensity"/>
         public int FloraDensity
         {
@@ -302,6 +317,7 @@ namespace Torch.Server.ViewModels
         {
             get => _settings.FloraDensityMultiplier; set { _settings.FloraDensityMultiplier = value; OnPropertyChanged(); }
         }
+#endif
 
         /// <inheritdoc cref="MyObjectBuilder_SessionSettings.MaxBackupSaves"/>
         public short MaxBackupSaves
@@ -309,11 +325,13 @@ namespace Torch.Server.ViewModels
             get => _settings.MaxBackupSaves; set { _settings.MaxBackupSaves = value; OnPropertyChanged(); }
         }
 
+#if SPACE
         /// <inheritdoc cref="MyObjectBuilder_SessionSettings.MaxBlocksPerPlayer"/>
         public int MaxBlocksPerPlayer
         {
             get => _settings.MaxBlocksPerPlayer; set { _settings.MaxBlocksPerPlayer = value; OnPropertyChanged(); }
         }
+#endif
 
         /// <inheritdoc cref="MyObjectBuilder_SessionSettings.MaxFloatingObjects"/>
         public short MaxFloatingObjects
@@ -321,11 +339,13 @@ namespace Torch.Server.ViewModels
             get => _settings.MaxFloatingObjects; set { _settings.MaxFloatingObjects = value; OnPropertyChanged(); }
         }
 
+#if SPACE
         /// <inheritdoc cref="MyObjectBuilder_SessionSettings.MaxGridSize"/>
         public int MaxGridSize
         {
             get => _settings.MaxGridSize; set { _settings.MaxGridSize = value; OnPropertyChanged(); }
         }
+#endif
 
         /// <inheritdoc cref="MyObjectBuilder_SessionSettings.MaxPlayers"/>
         public short MaxPlayers
@@ -339,11 +359,13 @@ namespace Torch.Server.ViewModels
             get => _settings.PhysicsIterations; set { _settings.PhysicsIterations = value; OnPropertyChanged(); }
         }
 
+#if SPACE
         /// <inheritdoc cref="MyObjectBuilder_SessionSettings.SpawnShipTimeMultiplier"/>
         public float SpawnTimeMultiplier
         {
             get => _settings.SpawnShipTimeMultiplier; set { _settings.SpawnShipTimeMultiplier = value; OnPropertyChanged(); }
         }
+#endif
 
         /// <inheritdoc cref="MyObjectBuilder_SessionSettings.SunRotationIntervalMinutes"/>
         public float SunRotationInterval
@@ -363,11 +385,13 @@ namespace Torch.Server.ViewModels
             get => _settings.WorldSizeKm; set { _settings.WorldSizeKm = value; OnPropertyChanged(); }
         }
 
+#if SPACE
         /// <inheritdoc cref="MyObjectBuilder_SessionSettings.ProceduralDensity"/>
         public float ProceduralDensity
         {
             get => _settings.ProceduralDensity; set { _settings.ProceduralDensity = value; OnPropertyChanged(); }
         }
+#endif
 
         /// <inheritdoc cref="MyObjectBuilder_SessionSettings.ProceduralSeed"/>
         public int ProceduralSeed
@@ -379,9 +403,11 @@ namespace Torch.Server.ViewModels
         /// <summary />
         public static implicit operator MyObjectBuilder_SessionSettings(SessionSettingsViewModel viewModel)
         {
+#if SPACe
             viewModel._settings.BlockTypeLimits.Dictionary.Clear();
             foreach (var limit in viewModel.BlockLimits)
                 viewModel._settings.BlockTypeLimits.Dictionary.Add(limit.BlockType, limit.Limit);
+#endif
             return viewModel._settings;
         }
     }

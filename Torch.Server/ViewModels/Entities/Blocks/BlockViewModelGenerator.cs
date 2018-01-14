@@ -5,13 +5,11 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
 using Sandbox.Game.Entities.Cube;
 using Sandbox.ModAPI;
-using Sandbox.ModAPI.Interfaces;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using NLog;
+#if SPACE
+using Sandbox.ModAPI.Interfaces;
 using Sandbox.ModAPI.Interfaces.Terminal;
 
 namespace Torch.Server.ViewModels.Blocks
@@ -130,3 +128,4 @@ namespace Torch.Server.ViewModels.Blocks
         }
     }
 }
+#endif

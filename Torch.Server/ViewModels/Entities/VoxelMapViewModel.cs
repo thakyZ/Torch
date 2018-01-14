@@ -23,6 +23,7 @@ namespace Torch.Server.ViewModels.Entities
             //TODO: fix
             return;
 
+#if SPACE
             AttachedGrids.Clear();
             var box = Entity.WorldAABB;
             var entities = new List<MyEntity>();
@@ -37,6 +38,7 @@ namespace Torch.Server.ViewModels.Entities
 
                 AttachedGrids.Add(gridModel);
             }
+#endif
         }
 
         public VoxelMapViewModel(MyVoxelBase e, EntityTreeViewModel tree) : base(e, tree)

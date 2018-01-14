@@ -106,11 +106,13 @@ namespace Torch.Server.ViewModels
             set { _config.PauseGameWhenEmpty = value; OnPropertyChanged(); }
         }
 
+#if SPACE
         public string PremadeCheckpointPath
         {
             get { return _config.PremadeCheckpointPath; }
             set { _config.PremadeCheckpointPath = value; OnPropertyChanged(); }
         }
+#endif
 
         public string LoadWorld
         {

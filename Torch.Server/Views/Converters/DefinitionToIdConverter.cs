@@ -33,8 +33,14 @@ namespace Torch.Server.Views.Converters
             {
                 type = Type.GetType("MyObjectBuilder_" + parts[0]);
             }
+#if SPACE
             return MyDefinitionManager.Static.GetDefinition(
                 new MyDefinitionId(type, parts.Length > 1 ? parts[1].Trim() : ""));
+#endif
+#if MEDIEVAL
+            // TODO
+            return null;
+#endif
         }
     }
 }

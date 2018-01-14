@@ -5,6 +5,9 @@ using Torch.Server.Managers;
 using VRage.Game.ModAPI;
 using VRage.ModAPI;
 using VRageMath;
+#if MEDIEVAL
+using IMyEntity=VRage.Game.Entity.MyEntity;
+#endif
 
 namespace Torch.Server.ViewModels.Entities
 {
@@ -48,14 +51,24 @@ namespace Torch.Server.ViewModels.Entities
                 if (!Vector3D.TryParse(value, out Vector3D v))
                     return;
 
+#if MEDIEVAL
+                TorchBase.Instance.InvokeBlocking(()=>Entity.PositionComp.SetPosition(v));
+#endif
+#if SPACE
                 TorchBase.Instance.InvokeBlocking(() => Entity.SetPosition(v));
+#endif
                 OnPropertyChanged();
             }
         }
 
         public virtual bool CanStop => Entity.Physics?.Enabled ?? false;
 
+#if MEDIEVAL
+        public virtual bool CanDelete => true;
+#endif
+#if SPACE
         public virtual bool CanDelete => !(Entity is IMyCharacter);
+#endif
 
         public virtual void Delete()
         {
