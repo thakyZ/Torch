@@ -164,6 +164,9 @@ namespace Torch
 #if SPACE
             MyFinalBuildConstants.APP_VERSION = MyPerGameSettings.BasicGameInfo.GameVersion;
 #endif
+#if MEDIEVAL
+            MyFinalBuildConstants.GAME_VERSION = MyPerGameSettings.BasicGameInfo.GameVersion;
+#endif
             MySessionComponentExtDebug.ForceDisable = true;
             MyPerGameSettings.SendLogToKeen = false;
             // SpaceEngineersGame.SetupAnalytics();

@@ -211,7 +211,7 @@ namespace Torch
             return Thread.CurrentThread.ManagedThreadId == MySandboxGame.Static.UpdateThread.ManagedThreadId;
         }
 
-#region Game Actions
+        #region Game Actions
 
         /// <summary>
         /// Invokes an action on the game thread.
@@ -253,6 +253,7 @@ namespace Torch
                     return Task.FromException<T>(e);
                 }
             }
+
             var ctx = new TaskCompletionSource<T>();
             MySandboxGame.Static.Invoke(() =>
             {
@@ -270,7 +271,6 @@ namespace Torch
                 }
             }, caller);
             return ctx.Task;
-
         }
 
 
@@ -292,6 +292,7 @@ namespace Torch
                     return Task.FromException(e);
                 }
             }
+
             var ctx = new TaskCompletionSource<bool>();
             MySandboxGame.Static.Invoke(() =>
             {
@@ -312,9 +313,9 @@ namespace Torch
             return ctx.Task;
         }
 
-#endregion
+        #endregion
 
-#region Torch Init/Destroy
+        #region Torch Init/Destroy
 
         protected abstract uint SteamAppId { get; }
         protected abstract string SteamAppName { get; }
@@ -323,15 +324,12 @@ namespace Torch
         public virtual void Init()
         {
             Debug.Assert(!_init, "Torch instance is already initialized.");
+            MyFileSystem.ExePath = Path.GetDirectoryName(typeof(MySandboxGame).Assembly.Location);
 #if SPACE
             SpaceEngineersGame.SetupBasicGameInfo();
             SpaceEngineersGame.SetupPerGameSettings();
 #endif
 #if MEDIEVAL
-            string appDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), SteamAppName);
-            string fullName = Path.GetDirectoryName(typeof(MySandboxGame).Assembly.Location);
-            string contentPath = Path.Combine(fullName, "Content");
-            MyFileSystem.Init(contentPath, appDataPath, "Mods", false);
             Medieval.MyMedievalGame.SetupBasicGameInfo();
             Medieval.MyMedievalGame.SetupPerGameSettings();
 #endif
@@ -395,7 +393,7 @@ namespace Torch
             Game = null;
         }
 
-#endregion
+        #endregion
 
         protected VRageGame Game { get; private set; }
 
@@ -408,6 +406,7 @@ namespace Torch
 
 
         private int _inProgressSaves = 0;
+
         /// <inheritdoc/>
         public virtual Task<GameSaveResult> Save(int timeoutMs = -1, bool exclusive = false)
         {
@@ -419,6 +418,7 @@ namespace Torch
                     return null;
                 }
             }
+
             return TorchAsyncSaving.Save(this, timeoutMs).ContinueWith((task, torchO) =>
             {
                 var torch = (TorchBase) torchO;
@@ -428,6 +428,7 @@ namespace Torch
                     Log.Error(task.Exception, "Failed to save game");
                     return GameSaveResult.UnknownError;
                 }
+
                 if (task.Result != GameSaveResult.Success)
                     Log.Error($"Failed to save game: {task.Result}");
                 else

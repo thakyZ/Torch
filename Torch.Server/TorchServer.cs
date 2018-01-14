@@ -125,7 +125,7 @@ namespace Torch.Server
 #endif
 #if MEDIEVAL
         /// <inheritdoc/>
-        protected override uint SteamAppId => 367970;
+        protected override uint SteamAppId => 333950;
 
         /// <inheritdoc/>
         protected override string SteamAppName => "MedievalEngineersDedicated";

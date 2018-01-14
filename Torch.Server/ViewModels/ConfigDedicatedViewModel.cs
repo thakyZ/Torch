@@ -10,6 +10,10 @@ using Torch.Collections;
 using VRage.Game;
 using VRage.Game.ModAPI;
 
+#if MEDIEVAL
+using MyObjectBuilder_SessionSettings=Medieval.ObjectBuilders.MyObjectBuilder_MedievalSessionSettings;
+#endif
+
 namespace Torch.Server.ViewModels
 {
     public class ConfigDedicatedViewModel : ViewModel

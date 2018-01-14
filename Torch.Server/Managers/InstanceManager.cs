@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Havok;
+using Medieval.ObjectBuilders;
 using NLog;
 using Sandbox.Engine.Networking;
 using Sandbox.Engine.Utils;
@@ -55,9 +56,13 @@ namespace Torch.Server.Managers
                 return;
             }
 
+#if MEDIEVAL
+            var config = new MyConfigDedicated<MyObjectBuilder_MedievalSessionSettings>(configPath);
+#endif
+#if SPACE
             var config = new MyConfigDedicated<MyObjectBuilder_SessionSettings>(configPath);
+#endif
             config.Load(configPath);
-
             DedicatedConfig = new ConfigDedicatedViewModel(config);
             var worldFolders = Directory.EnumerateDirectories(Path.Combine(Torch.Config.InstancePath, "Saves"));
 
