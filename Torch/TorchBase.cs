@@ -330,6 +330,19 @@ namespace Torch
             SpaceEngineersGame.SetupPerGameSettings();
 #endif
 #if MEDIEVAL
+            // check init, or init
+            try
+            {
+                var tmp = MyFileSystem.ContentPath;
+            }
+            catch
+            {
+                string appDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                    SteamAppName);
+                string fullName = Path.GetDirectoryName(typeof(MySandboxGame).Assembly.Location);
+                string contentPath = Path.Combine(fullName, "Content");
+                MyFileSystem.Init(contentPath, appDataPath, "Mods", false);
+            }
             Medieval.MyMedievalGame.SetupBasicGameInfo();
             Medieval.MyMedievalGame.SetupPerGameSettings();
 #endif
