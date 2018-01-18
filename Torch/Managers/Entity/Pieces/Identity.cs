@@ -24,25 +24,37 @@ namespace Torch.Managers.Entity.Pieces
         private readonly string _factionName;
         private readonly bool? _inFaction;
         private readonly bool? _isOwned;
+        private readonly NumericCompareQuery _timeSinceLastLogin;
 
         private static readonly string[] _prefixId = {"id/"};
         private static readonly string[] _prefixSteamId = {"steam/", "sid/"};
         private static readonly string[] _prefixFaction = {"faction/", "fac/"};
+        private static readonly string[] _prefixTimeSinceLogin = {"age"};
+        private static readonly string[] _prefixDisplayName = {"display/", ""};
 
         protected Identity(ITorchBase torch, string value) : base(torch)
         {
+            foreach (string s in _prefixTimeSinceLogin)
+                if (value.StartsWith(s, StringComparison.OrdinalIgnoreCase))
+                {
+                    _timeSinceLastLogin = new NumericCompareQuery(value.Substring(s.Length));
+                    return;
+                }
+
             foreach (string s in _prefixId)
                 if (value.StartsWith(s, StringComparison.OrdinalIgnoreCase))
                 {
                     _identityId = long.Parse(value.Substring(s.Length));
                     return;
                 }
+
             foreach (string s in _prefixSteamId)
                 if (value.StartsWith(s, StringComparison.OrdinalIgnoreCase))
                 {
                     _steamId = ulong.Parse(value.Substring(s.Length));
                     return;
                 }
+
             foreach (string s in _prefixFaction)
                 if (value.StartsWith(s, StringComparison.OrdinalIgnoreCase))
                 {
@@ -71,13 +83,19 @@ namespace Torch.Managers.Entity.Pieces
                 _inFaction = true;
                 return;
             }
+
             if (value.Equals("nofaction", StringComparison.OrdinalIgnoreCase))
             {
                 _inFaction = false;
                 return;
             }
 
-            _displayName = value;
+            foreach (var s in _prefixDisplayName)
+                if (s.Length == 0 || value.StartsWith(s, StringComparison.OrdinalIgnoreCase))
+                {
+                    _displayName = value.Substring(s.Length);
+                    return;
+                }
         }
 
         public override bool Test(MySlimBlock block)
@@ -115,9 +133,15 @@ namespace Torch.Managers.Entity.Pieces
             if (identity == null)
                 return false;
 
+            if (_timeSinceLastLogin != null)
+            {
+                return !(Torch.CurrentSession?.KeenSession.Players.IdentityIsNpc(identityId) ?? true) &&
+                       _timeSinceLastLogin.Test((DateTime.Now - identity.LastLoginTime).TotalSeconds);
+            }
+
             if (_displayName != null)
                 return GlobbedEquals(_displayName, identity.DisplayName);
-            
+
             if (!Torch.CurrentSession.KeenSession.Players.TryGetPlayerId(identityId, out MyPlayer.PlayerId playerId))
                 return false;
             if (_steamId.HasValue)
@@ -143,6 +167,8 @@ namespace Torch.Managers.Entity.Pieces
                 str = $"faction ID == {_factionId.Value}";
             else if (_factionName != null)
                 str = $"faction name/tag == {_factionName}";
+            else if (_timeSinceLastLogin != null)
+                str = $"age{_timeSinceLastLogin}";
             return $"{GetType().Name} {str}";
         }
     }

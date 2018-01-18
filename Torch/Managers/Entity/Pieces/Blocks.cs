@@ -9,7 +9,7 @@ using VRage.Game.Entity;
 namespace Torch.Managers.Entity.Pieces
 {
     [Piece("block.owner", RequiresValue = true,
-        ExampleParse = "block.owner:'Equinox'\nblock.owner:'nofaction'\nblock.owner:'steam/76561198048419394'")]
+        ExampleParse = "block.owner:'Equinox'\nblock.owner:'nofaction'\nblock.owner:'steam/76561198048419394'\nblock.owner:'age>604800'")]
     public class BlockOwnership : Identity
     {
         public BlockOwnership(ITorchBase torch, string value) : base(torch, value)

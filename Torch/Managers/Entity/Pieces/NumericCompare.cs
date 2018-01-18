@@ -7,7 +7,7 @@ using VRage.Game.Entity;
 
 namespace Torch.Managers.Entity.Pieces
 {
-    public abstract class NumericCompare : Piece
+    public class NumericCompareQuery
     {
         private class ComparatorAttribute : Attribute
         {
@@ -43,14 +43,14 @@ namespace Torch.Managers.Entity.Pieces
         private static readonly Dictionary<string, Comparator> _comparatorByKey;
         private static readonly Dictionary<Comparator, string> _keyByComparator;
 
-        static NumericCompare()
+        static NumericCompareQuery()
         {
             _comparatorByKey = new Dictionary<string, Comparator>();
             _keyByComparator = new Dictionary<Comparator, string>();
             foreach (FieldInfo f in typeof(Comparator).GetFields(BindingFlags.Static | BindingFlags.Public))
             {
                 var attr = f.GetCustomAttribute<ComparatorAttribute>();
-                var c = (Comparator) f.GetValue(null);
+                var c = (Comparator)f.GetValue(null);
                 foreach (string k in attr.Keys)
                     _comparatorByKey.Add(k, c);
                 _keyByComparator.Add(c, attr.Keys[0]);
@@ -60,7 +60,7 @@ namespace Torch.Managers.Entity.Pieces
         private readonly Comparator _comparer;
         private readonly double _against;
 
-        protected NumericCompare(ITorchBase torch, string value) : base(torch)
+        public NumericCompareQuery(string value)
         {
             value = value.TrimStart();
 
@@ -80,22 +80,8 @@ namespace Torch.Managers.Entity.Pieces
             _against = double.Parse(value.Substring(i));
         }
 
-        protected abstract double? Get(MySlimBlock block);
-        protected abstract double? Get(MyEntity entity);
 
-        public override bool Test(MySlimBlock block)
-        {
-            double? c = Get(block);
-            return c.HasValue && Test(c.Value);
-        }
-
-        public override bool Test(MyEntity entity)
-        {
-            double? c = Get(entity);
-            return c.HasValue && Test(c.Value);
-        }
-
-        private bool Test(double v)
+        public bool Test(double v)
         {
             switch (_comparer)
             {
@@ -118,7 +104,36 @@ namespace Torch.Managers.Entity.Pieces
 
         public override string ToString()
         {
-            return $"{GetType().Name} {_keyByComparator[_comparer]} {_against}";
+            return $"{_keyByComparator[_comparer]} {_against}";
+        }
+    }
+
+    public abstract class NumericCompare : Piece
+    {
+        private readonly NumericCompareQuery _comparer;
+        protected NumericCompare(ITorchBase torch, string value) : base(torch)
+        {
+            _comparer = new NumericCompareQuery(value);
+        }
+
+        protected abstract double? Get(MySlimBlock block);
+        protected abstract double? Get(MyEntity entity);
+
+        public override bool Test(MySlimBlock block)
+        {
+            double? c = Get(block);
+            return c.HasValue && _comparer.Test(c.Value);
+        }
+
+        public override bool Test(MyEntity entity)
+        {
+            double? c = Get(entity);
+            return c.HasValue && _comparer.Test(c.Value);
+        }
+
+        public override string ToString()
+        {
+            return $"{GetType().Name} {_comparer}";
         }
     }
 }
