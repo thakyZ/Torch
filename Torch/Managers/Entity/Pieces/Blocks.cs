@@ -1,4 +1,6 @@
-﻿using Sandbox.Game.Entities;
+﻿using System.Collections.Generic;
+using Sandbox.Definitions;
+using Sandbox.Game.Entities;
 using Sandbox.Game.Entities.Cube;
 using Torch.API;
 using VRage.Game;
@@ -95,8 +97,8 @@ namespace Torch.Managers.Entity.Pieces
 
         public override bool ChildrenRelevant(MyEntity entity) => entity is MyCubeGrid;
 
-        public override bool CanTest(MyEntity e) => e is MyCubeBlock;
-        public override bool CanTest(MySlimBlock e) => true;
+        public override bool CanTest(MySlimBlock e) => e.BlockDefinition != null;
+        public override bool CanTest(MyEntity entity) => (entity as MyCubeBlock)?.BlockDefinition != null;
 
         protected override MyDefinitionId IdFor(MySlimBlock block)
         {
@@ -107,5 +109,42 @@ namespace Torch.Managers.Entity.Pieces
         {
             return (ent as MyCubeBlock)?.BlockDefinition?.Id ?? default(MyDefinitionId);
         }
+    }
+
+    [Piece("block.pair", "block.pairname", RequiresValue = true, ExampleParse = "block.pair:'BatteryBlock'")]
+    public class BlockPair : Piece
+    {
+        private readonly string _pairName;
+
+        public BlockPair(ITorchBase torch, string value) : base(torch)
+        {
+            _pairName = value;
+        }
+        
+        public override bool ChildrenRelevant(MyEntity entity) => entity is MyCubeGrid;
+        
+        private readonly Dictionary<MyDefinitionId, bool> _cache =
+            new Dictionary<MyDefinitionId, bool>(MyDefinitionId.Comparer);
+
+        protected bool Test(MyCubeBlockDefinition def)
+        {
+            if (_cache.TryGetValue(def.Id, out bool cache))
+                return cache;
+            return _cache[def.Id] = def.BlockPairName != null && GlobbedEquals(_pairName, def.BlockPairName);
+        }
+
+        public override bool Test(MySlimBlock block)
+        {
+            return block.BlockDefinition != null && Test(block.BlockDefinition);
+        }
+
+        public override bool Test(MyEntity entity)
+        {
+            var def = (entity as MyCubeBlock)?.BlockDefinition;
+            return def != null && Test(def);
+        }
+
+        public override bool CanTest(MySlimBlock e) => e.BlockDefinition != null;
+        public override bool CanTest(MyEntity entity) => (entity as MyCubeBlock)?.BlockDefinition != null;
     }
 }
