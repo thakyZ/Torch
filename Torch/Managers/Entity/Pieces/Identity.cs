@@ -24,6 +24,7 @@ namespace Torch.Managers.Entity.Pieces
         private readonly string _factionName;
         private readonly bool? _inFaction;
         private readonly bool? _isOwned;
+        private readonly bool? _isNpc;
         private readonly NumericCompareQuery _timeSinceLastLogin;
 
         private static readonly string[] _prefixId = {"id/"};
@@ -65,6 +66,18 @@ namespace Torch.Managers.Entity.Pieces
                         _factionName = t;
                     return;
                 }
+
+            if (value.Equals("isnpc", StringComparison.OrdinalIgnoreCase))
+            {
+                _isNpc = true;
+                return;
+            }
+
+            if (value.Equals("isplayer", StringComparison.OrdinalIgnoreCase))
+            {
+                _isNpc = false;
+                return;
+            }
 
             if (value.Equals("any", StringComparison.OrdinalIgnoreCase))
             {
@@ -116,6 +129,9 @@ namespace Torch.Managers.Entity.Pieces
             if (_identityId.HasValue)
                 return _identityId.Value == identityId;
 
+            if (_isNpc.HasValue)
+                return (Torch.CurrentSession?.KeenSession.Players.IdentityIsNpc(identityId) ?? false) == _isNpc.Value;
+
             if (_factionName != null || _factionId.HasValue || _inFaction.HasValue)
             {
                 MyFaction faction = Torch.CurrentSession?.KeenSession.Factions.GetPlayerFaction(identityId);
@@ -134,10 +150,7 @@ namespace Torch.Managers.Entity.Pieces
                 return false;
 
             if (_timeSinceLastLogin != null)
-            {
-                return !(Torch.CurrentSession?.KeenSession.Players.IdentityIsNpc(identityId) ?? true) &&
-                       _timeSinceLastLogin.Test((DateTime.Now - identity.LastLoginTime).TotalSeconds);
-            }
+                return _timeSinceLastLogin.Test((DateTime.Now - identity.LastLoginTime).TotalSeconds);
 
             if (_displayName != null)
                 return GlobbedEquals(_displayName, identity.DisplayName);
@@ -169,6 +182,8 @@ namespace Torch.Managers.Entity.Pieces
                 str = $"faction name/tag == {_factionName}";
             else if (_timeSinceLastLogin != null)
                 str = $"age{_timeSinceLastLogin}";
+            else if (_isNpc.HasValue)
+                str = _isNpc.Value ? "is NPC" : "is player";
             return $"{GetType().Name} {str}";
         }
     }
