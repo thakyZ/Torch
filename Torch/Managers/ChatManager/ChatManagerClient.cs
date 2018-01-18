@@ -157,6 +157,7 @@ namespace Torch.Managers.ChatManager
         
         protected static bool HasHud => !Sandbox.Engine.Platform.Game.IsDedicated;
 
+#pragma warning disable 649
         [ReflectedMethod(Name = _hudChatMessageReceivedName)]
         private static Action<MyHudChat, ulong, string> _hudChatMessageReceived;
         [ReflectedMethod(Name = _hudChatScriptedMessageReceivedName)]
@@ -166,6 +167,7 @@ namespace Torch.Managers.ChatManager
         private static Func<ReflectedEventReplacer> _chatMessageReceivedFactory;
         [ReflectedEventReplace(typeof(MyMultiplayerBase), nameof(MyMultiplayerBase.ScriptedChatMessageReceived), typeof(MyHudChat), _hudChatScriptedMessageReceivedName)]
         private static Func<ReflectedEventReplacer> _scriptedChatMessageReceivedFactory;
+#pragma warning restore 649
 
         private ReflectedEventReplacer _chatMessageRecievedReplacer;
         private ReflectedEventReplacer _scriptedChatMessageRecievedReplacer;

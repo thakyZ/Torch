@@ -170,6 +170,18 @@
     <Compile Include="Event\EventList.cs" />
     <Compile Include="Event\EventManager.cs" />
     <Compile Include="Event\IEventList.cs" />
+    <Compile Include="Managers\Entity\EntityQuery.cs" />
+    <Compile Include="Managers\Entity\Pieces\Blocks.cs" />
+    <Compile Include="Managers\Entity\Pieces\BooleanCompare.cs" />
+    <Compile Include="Managers\Entity\Pieces\Definition.cs" />
+    <Compile Include="Managers\Entity\Pieces\Identity.cs" />
+    <Compile Include="Managers\Entity\Pieces\Misc.cs" />
+    <Compile Include="Managers\Entity\Pieces\NumericCompare.cs" />
+    <Compile Include="Managers\Entity\Pieces\Piece.cs" />
+    <Compile Include="Managers\Entity\Pieces\Composite.cs" />
+    <Compile Include="Managers\Entity\Pieces\Physics.cs" />
+    <Compile Include="Managers\Entity\QueryParser.cs" />
+    <Compile Include="Managers\Entity\Pieces\PieceResolver.cs" />
     <Compile Include="Managers\KeenLogPatch.cs" />
     <Compile Include="Managers\PatchManager\AssemblyMemory.cs" />
     <Compile Include="Managers\PatchManager\DecoratedMethod.cs" />
@@ -212,7 +224,7 @@
     <Compile Include="Commands\Permissions\PermissionAttribute.cs" />
     <Compile Include="Commands\Permissions\PermissonsSystem.cs" />
     <Compile Include="Commands\TorchCommands.cs" />
-    <Compile Include="Managers\EntityManager.cs" />
+    <Compile Include="Managers\Entity\EntityManager.cs" />
     <Compile Include="Managers\FilesystemManager.cs" />
     <Compile Include="Managers\Manager.cs" />
     <Compile Include="Managers\NetworkManager\NetworkHandlerBase.cs" />

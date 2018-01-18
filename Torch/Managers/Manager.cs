@@ -56,7 +56,10 @@ namespace Torch.Managers
             public bool Ordered { get; set; } = true;
         }
 
-        protected ITorchBase Torch { get; }
+        /// <summary>
+        /// Torch instance this manager was created for
+        /// </summary>
+        public ITorchBase Torch { get; }
 
         protected Manager(ITorchBase torchInstance)
         {

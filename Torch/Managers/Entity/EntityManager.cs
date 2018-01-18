@@ -1,33 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using System.Timers;
 using NLog;
-using Sandbox;
-using Sandbox.Engine.Multiplayer;
 using Sandbox.Game.Entities;
-using Sandbox.Game.Entities.Blocks;
-using Sandbox.Game.Multiplayer;
-using Sandbox.Game.World;
-using Sandbox.ModAPI;
-using SpaceEngineers.Game.Entities.Blocks;
-using SpaceEngineers.Game.ModAPI;
 using Torch.API;
-using Torch.API.Managers;
-using Torch.API.Plugins;
-using VRage;
-using VRage.Collections;
-using VRage.Game;
-using VRage.Game.Entity;
+using Torch.Managers.Entity;
 using VRage.Game.ModAPI;
 using VRage.Groups;
-using VRage.ModAPI;
 using VRage.ObjectBuilders;
-using VRage.Sync;
 using VRageMath;
 
 namespace Torch.Managers
@@ -57,6 +36,17 @@ namespace Torch.Managers
             var grid = MyEntities.CreateFromObjectBuilderParallel(gridOb);
             grid.PositionComp.SetPosition(position);
             MyEntities.Add(grid);
+        }
+
+        /// <summary>
+        /// Compiles a new entity query
+        /// </summary>
+        /// <param name="query">Query string</param>
+        /// <returns>the query, ready for execution</returns>
+        /// <exception cref="QueryParser.ParseException">Invalid query string format</exception>
+        public EntityQuery CompileQuery(string query)
+        {
+            return new EntityQuery(this, query);
         }
     }
 

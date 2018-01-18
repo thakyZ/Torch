@@ -9,6 +9,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Forms;
 using NLog;
+using Torch.Managers.Entity;
 using Torch.Utils;
 using MessageBox = System.Windows.MessageBox;
 
@@ -39,7 +40,7 @@ namespace Torch.Client
 
         public const string ConfigName = "Torch.cfg";
 
-        private static Logger _log = LogManager.GetLogger("Torch");
+        private static readonly Logger _log = LogManager.GetLogger("Torch");
 
 #if DEBUG
         [DllImport("kernel32.dll")]
@@ -66,7 +67,6 @@ namespace Torch.Client
                         Path.Combine(SpaceEngineersInstallAlias, SpaceEngineersBinaries));
                     return;
                 }
-
                 RunClient();
 #if DEBUG
             }
