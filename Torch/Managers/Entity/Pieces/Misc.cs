@@ -13,9 +13,9 @@ namespace Torch.Managers.Entity.Pieces
     [Piece("entity.type", "type", RequiresValue = true, ExampleParse = "entity.type:'*Reactor'")]
     [PieceAlias(new[] {"block", "blocks"}, "entity.type:'MySlimBlock'")]
     [PieceAlias(new[] {"grid", "grids"}, "entity.type:'MyCubeGrid'")]
-    [PieceAlias(new[] { "char", "chars", "character", "characters" }, "entity.type:'MyCharacter'")]
-    [PieceAlias(new[] { "voxel", "voxels" }, "entity.type:'MyVoxelBase'")]
-    [PieceAlias(new[] { "planet", "planets" }, "entity.type:'MyPlanet'")]
+    [PieceAlias(new[] {"char", "chars", "character", "characters"}, "entity.type:'MyCharacter'")]
+    [PieceAlias(new[] {"voxel", "voxels"}, "entity.type:'MyVoxelBase'")]
+    [PieceAlias(new[] {"planet", "planets"}, "entity.type:'MyPlanet'")]
     public class EntityType : Piece
     {
         private readonly string _value;
@@ -40,14 +40,11 @@ namespace Torch.Managers.Entity.Pieces
             return _resultCache[t] = Test(t.BaseType);
         }
 
-        public override bool Test(MySlimBlock block)
+        public override bool Test(object e)
         {
-            return Test(block.GetType()) || (block.FatBlock != null && Test(block.FatBlock.GetType()));
-        }
-
-        public override bool Test(MyEntity entity)
-        {
-            return Test(entity.GetType()) || (entity is MyCubeBlock block && Test(block.SlimBlock.GetType()));
+            return Test(e.GetType()) ||
+                   (e is MySlimBlock slim && slim.FatBlock != null && Test(slim.FatBlock.GetType())) ||
+                   (e is MyCubeBlock fat && Test(fat.SlimBlock.GetType()));
         }
     }
 }

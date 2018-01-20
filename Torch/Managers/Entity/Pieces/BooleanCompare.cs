@@ -13,20 +13,15 @@ namespace Torch.Managers.Entity.Pieces
             _against = bool.Parse(value);
         }
 
-        protected abstract bool? Get(MySlimBlock block);
-        protected abstract bool? Get(MyEntity entity);
+        protected abstract bool? Get(object block);
 
-        public override bool Test(MySlimBlock block)
+        public override bool Test(object e)
         {
-            bool? c = Get(block);
+            bool? c = Get(e);
             return c.HasValue && c.Value == _against;
         }
 
-        public override bool Test(MyEntity entity)
-        {
-            bool? c = Get(entity);
-            return c.HasValue && c.Value == _against;
-        }
+        public override bool CanTest(object o) => Get(o).HasValue;
         
         public override string ToString()
         {

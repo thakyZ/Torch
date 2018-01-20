@@ -116,20 +116,15 @@ namespace Torch.Managers.Entity.Pieces
             _comparer = new NumericCompareQuery(value);
         }
 
-        protected abstract double? Get(MySlimBlock block);
-        protected abstract double? Get(MyEntity entity);
+        protected abstract double? Get(object e);
 
-        public override bool Test(MySlimBlock block)
+        public override bool Test(object e)
         {
-            double? c = Get(block);
+            double? c = Get(e);
             return c.HasValue && _comparer.Test(c.Value);
         }
 
-        public override bool Test(MyEntity entity)
-        {
-            double? c = Get(entity);
-            return c.HasValue && _comparer.Test(c.Value);
-        }
+        public override bool CanTest(object e) => Get(e).HasValue;
 
         public override string ToString()
         {

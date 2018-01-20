@@ -25,31 +25,11 @@ namespace Torch.Managers.Entity.Pieces
         }
 
         /// <inheritdoc/>
-        public override bool Test(MySlimBlock block)
+        public override bool Test(object o)
         {
             foreach (Piece k in Children)
             {
-                bool r = k.Test(block);
-                switch (Operation)
-                {
-                    case LogicOp.And when !r:
-                        return false;
-                    case LogicOp.Or when r:
-                        return true;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
-
-            return Operation == LogicOp.And;
-        }
-
-        /// <inheritdoc/>
-        public override bool Test(MyEntity entity)
-        {
-            foreach (Piece k in Children)
-            {
-                bool r = k.Test(entity);
+                bool r = k.Test(o);
                 switch (Operation)
                 {
                     case LogicOp.And when !r:
@@ -91,19 +71,10 @@ namespace Torch.Managers.Entity.Pieces
         }
 
         /// <inheritdoc/>
-        public override bool CanTest(MySlimBlock objectType)
+        public override bool CanTest(object o)
         {
             foreach (Piece k in Children)
-                if (!k.CanTest(objectType))
-                    return false;
-            return true;
-        }
-
-        /// <inheritdoc/>
-        public override bool CanTest(MyEntity objectType)
-        {
-            foreach (Piece k in Children)
-                if (!k.CanTest(objectType))
+                if (!k.CanTest(o))
                     return false;
             return true;
         }

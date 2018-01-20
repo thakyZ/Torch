@@ -17,10 +17,12 @@ namespace Torch.Managers.PatchManager
     {
         private static readonly Logger _log = LogManager.GetCurrentClassLogger();
         private readonly MethodBase _method;
+        private readonly string _methodName;
 
         internal DecoratedMethod(MethodBase method) : base(null)
         {
             _method = method;
+            _methodName = (method.DeclaringType?.FullName ?? "null") + ":" + method.ToString();
         }
 
         private long _revertAddress;

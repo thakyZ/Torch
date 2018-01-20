@@ -56,18 +56,11 @@ namespace Torch.Managers.Entity.Pieces
         }
 
         /// <summary>
-        /// Does the given block match the query.
+        /// Does the given object match the query.
         /// </summary>
-        /// <param name="block">Block to test</param>
+        /// <param name="e">object to test</param>
         /// <returns>true</returns>
-        public abstract bool Test(MySlimBlock block);
-
-        /// <summary>
-        /// Does the given entity match the query.
-        /// </summary>
-        /// <param name="entity">Entity to test</param>
-        /// <returns>true</returns>
-        public abstract bool Test(MyEntity entity);
+        public abstract bool Test(object e);
 
         /// <summary>
         /// Does the entity require testing its children individually.
@@ -85,17 +78,7 @@ namespace Torch.Managers.Entity.Pieces
         /// </summary>
         /// <param name="ent">Object to evaluate</param>
         /// <returns>true if we can test the given object</returns>
-        public virtual bool CanTest(MyEntity ent)
-        {
-            return true;
-        }
-
-        /// <summary>
-        /// Can the given object, or children of the given object, be tested.
-        /// </summary>
-        /// <param name="ent">Object to evaluate</param>
-        /// <returns>true if we can test the given object</returns>
-        public virtual bool CanTest(MySlimBlock ent)
+        public virtual bool CanTest(object ent)
         {
             return true;
         }

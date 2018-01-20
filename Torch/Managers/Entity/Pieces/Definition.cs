@@ -28,8 +28,7 @@ namespace Torch.Managers.Entity.Pieces
             _subtype = sb[1];
         }
 
-        protected abstract MyDefinitionId IdFor(MySlimBlock block);
-        protected abstract MyDefinitionId IdFor(MyEntity ent);
+        protected abstract MyDefinitionId? IdFor(object o);
 
         private readonly Dictionary<MyDefinitionId, bool> _resultCache =
             new Dictionary<MyDefinitionId, bool>(MyDefinitionId.Comparer);
@@ -43,15 +42,12 @@ namespace Torch.Managers.Entity.Pieces
             return _resultCache[id] = GlobbedEquals(_subtype, id.SubtypeName);
         }
 
-        public override bool Test(MySlimBlock block)
+        public override bool Test(object o)
         {
-            return Test(IdFor(block));
+            return Test(IdFor(o) ?? default(MyDefinitionId));
         }
 
-        public override bool Test(MyEntity entity)
-        {
-            return Test(IdFor(entity));
-        }
+        public override bool CanTest(object o) => IdFor(o).HasValue;
 
         public override string ToString()
         {

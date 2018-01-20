@@ -9,29 +9,22 @@ using VRage.Game.Entity;
 namespace Torch.Managers.Entity.Pieces
 {
     [Piece("block.owner", RequiresValue = true,
-        ExampleParse = "block.owner:'Equinox'\nblock.owner:'nofaction'\nblock.owner:'steam/76561198048419394'\nblock.owner:'age>604800'")]
+        ExampleParse =
+            "block.owner:'Equinox'\nblock.owner:'nofaction'\nblock.owner:'steam/76561198048419394'\nblock.owner:'age>604800'")]
     public class BlockOwnership : Identity
     {
         public BlockOwnership(ITorchBase torch, string value) : base(torch, value)
         {
         }
 
-        protected override long IdentityFor(MySlimBlock block)
+        protected override long IdentityFor(object block)
         {
-            return block.OwnerId;
-        }
-
-        protected override long IdentityFor(MyEntity entity)
-        {
-            if (entity is MyCubeBlock block)
-                return block.OwnerId;
-            return 0;
+            return (block as MySlimBlock)?.OwnerId ?? (block as MyCubeBlock)?.OwnerId ?? 0;
         }
 
         public override bool ChildrenRelevant(MyEntity entity) => entity is MyCubeGrid;
 
-        public override bool CanTest(MySlimBlock block) => true;
-        public override bool CanTest(MyEntity entity) => entity is MyCubeBlock;
+        public override bool CanTest(object o) => o is MySlimBlock || o is MyCubeBlock;
     }
 
     [Piece("block.builder", "block.builtby", "builtby", "builder", RequiresValue = true,
@@ -42,23 +35,14 @@ namespace Torch.Managers.Entity.Pieces
         {
         }
 
-        protected override long IdentityFor(MySlimBlock block)
+        protected override long IdentityFor(object block)
         {
-            return block.BuiltBy;
-        }
-
-        protected override long IdentityFor(MyEntity entity)
-        {
-            if (entity is MyCubeBlock block)
-                return block.BuiltBy;
-            return 0;
+            return (block as MySlimBlock)?.OwnerId ?? (block as MyCubeBlock)?.OwnerId ?? 0;
         }
 
         public override bool ChildrenRelevant(MyEntity entity) => entity is MyCubeGrid;
 
-
-        public override bool CanTest(MySlimBlock block) => true;
-        public override bool CanTest(MyEntity entity) => entity is MyCubeBlock;
+        public override bool CanTest(object o) => o is MySlimBlock || o is MyCubeBlock;
     }
 
     [Piece("block.enabled", RequiresValue = true, ExampleParse = "block.isenabled:true")]
@@ -70,20 +54,14 @@ namespace Torch.Managers.Entity.Pieces
         {
         }
 
-        protected override bool? Get(MySlimBlock block)
+        protected override bool? Get(object o)
         {
-            return (block.FatBlock as MyFunctionalBlock)?.Enabled;
-        }
-
-        protected override bool? Get(MyEntity entity)
-        {
-            return (entity as MyFunctionalBlock)?.Enabled;
+            return (((o as MySlimBlock)?.FatBlock ?? o) as MyFunctionalBlock)?.Enabled;
         }
 
         public override bool ChildrenRelevant(MyEntity entity) => entity is MyCubeGrid;
 
-        public override bool CanTest(MySlimBlock block) => block.FatBlock is MyFunctionalBlock;
-        public override bool CanTest(MyEntity entity) => entity is MyFunctionalBlock;
+        public override bool CanTest(object o) => ((o as MySlimBlock)?.FatBlock ?? o) is MyFunctionalBlock;
     }
 
     [Piece("block.def", "block.definition", RequiresValue = true, ExampleParse = "block.def:'Refinery/LargeRefinery'")]
@@ -97,18 +75,8 @@ namespace Torch.Managers.Entity.Pieces
 
         public override bool ChildrenRelevant(MyEntity entity) => entity is MyCubeGrid;
 
-        public override bool CanTest(MySlimBlock e) => e.BlockDefinition != null;
-        public override bool CanTest(MyEntity entity) => (entity as MyCubeBlock)?.BlockDefinition != null;
-
-        protected override MyDefinitionId IdFor(MySlimBlock block)
-        {
-            return block.BlockDefinition?.Id ?? default(MyDefinitionId);
-        }
-
-        protected override MyDefinitionId IdFor(MyEntity ent)
-        {
-            return (ent as MyCubeBlock)?.BlockDefinition?.Id ?? default(MyDefinitionId);
-        }
+        protected override MyDefinitionId? IdFor(object e) =>
+            ((e as MyCubeBlock)?.SlimBlock ?? (e as MySlimBlock))?.BlockDefinition?.Id;
     }
 
     [Piece("block.pair", "block.pairname", RequiresValue = true, ExampleParse = "block.pair:'BatteryBlock'")]
@@ -120,9 +88,9 @@ namespace Torch.Managers.Entity.Pieces
         {
             _pairName = value;
         }
-        
+
         public override bool ChildrenRelevant(MyEntity entity) => entity is MyCubeGrid;
-        
+
         private readonly Dictionary<MyDefinitionId, bool> _cache =
             new Dictionary<MyDefinitionId, bool>(MyDefinitionId.Comparer);
 
@@ -133,18 +101,15 @@ namespace Torch.Managers.Entity.Pieces
             return _cache[def.Id] = def.BlockPairName != null && GlobbedEquals(_pairName, def.BlockPairName);
         }
 
-        public override bool Test(MySlimBlock block)
-        {
-            return block.BlockDefinition != null && Test(block.BlockDefinition);
-        }
+        protected MyCubeBlockDefinition Def(object e) =>
+            ((e as MyCubeBlock)?.SlimBlock ?? (e as MySlimBlock))?.BlockDefinition;
 
-        public override bool Test(MyEntity entity)
+        public override bool Test(object o)
         {
-            var def = (entity as MyCubeBlock)?.BlockDefinition;
+            MyCubeBlockDefinition def = Def(o);
             return def != null && Test(def);
         }
 
-        public override bool CanTest(MySlimBlock e) => e.BlockDefinition != null;
-        public override bool CanTest(MyEntity entity) => (entity as MyCubeBlock)?.BlockDefinition != null;
+        public override bool CanTest(object e) => Def(e) != null;
     }
 }

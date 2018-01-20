@@ -13,9 +13,7 @@ namespace Torch.Managers.Entity.Pieces
 {
     public abstract class Identity : Piece
     {
-        protected abstract long IdentityFor(MySlimBlock block);
-
-        protected abstract long IdentityFor(MyEntity entity);
+        protected abstract long IdentityFor(object o);
 
         private readonly long? _identityId;
         private readonly ulong? _steamId;
@@ -111,14 +109,9 @@ namespace Torch.Managers.Entity.Pieces
                 }
         }
 
-        public override bool Test(MySlimBlock block)
+        public override bool Test(object o)
         {
-            return Test(IdentityFor(block));
-        }
-
-        public override bool Test(MyEntity entity)
-        {
-            return Test(IdentityFor(entity));
+            return Test(IdentityFor(o));
         }
 
         protected bool Test(long identityId)

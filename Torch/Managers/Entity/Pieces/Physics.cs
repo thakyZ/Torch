@@ -14,18 +14,19 @@ namespace Torch.Managers.Entity.Pieces
         {
         }
 
-        protected override double? Get(MySlimBlock block)
-        {
-            return block.CubeGrid?.Physics?.Speed;
-        }
+        protected MyEntity Entity;
 
-        protected override double? Get(MyEntity entity)
+        protected override double? Get(object e)
         {
-            return entity.Physics?.Speed;
+            switch (e)
+            {
+                case MySlimBlock block:
+                    return block.CubeGrid?.Physics?.Speed;
+                case MyEntity entity:
+                    return entity.Physics?.Speed ?? entity.Parent?.Physics?.Speed;
+            }
+            return null;
         }
-
-        public override bool CanTest(MySlimBlock block) => block.CubeGrid?.Physics != null;
-        public override bool CanTest(MyEntity entity) => entity.Physics != null;
     }
 
     [Piece("physics.static", "physicsStatic", RequiresValue = true, ExampleParse = "physics.static:true")]
@@ -38,17 +39,16 @@ namespace Torch.Managers.Entity.Pieces
         }
 
 
-        protected override bool? Get(MySlimBlock block)
+        protected override bool? Get(object e)
         {
-            return block.CubeGrid?.Physics?.IsStatic;
+            switch (e)
+            {
+                case MySlimBlock block:
+                    return block.CubeGrid?.Physics?.IsStatic;
+                case MyEntity entity:
+                    return entity.Physics?.IsStatic ?? entity.Parent?.Physics?.IsStatic;
+            }
+            return null;
         }
-
-        protected override bool? Get(MyEntity entity)
-        {
-            return entity.Physics?.IsStatic;
-        }
-
-        public override bool CanTest(MySlimBlock block) => block.CubeGrid?.Physics != null;
-        public override bool CanTest(MyEntity entity) => entity.Physics != null;
     }
 }
