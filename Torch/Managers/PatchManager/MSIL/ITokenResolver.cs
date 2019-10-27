@@ -61,11 +61,7 @@ namespace Torch.Managers.PatchManager.MSIL
     internal sealed class NullTokenResolver : ITokenResolver
     {
         internal static readonly NullTokenResolver Instance = new NullTokenResolver();
-
-        internal NullTokenResolver()
-        {
-        }
-
+        
         public MemberInfo ResolveMember(int token)
         {
             return null;
@@ -148,16 +144,14 @@ namespace Torch.Managers.PatchManager.MSIL
 
         public Type ResolveType(int token)
         {
-            IntPtr typeHandle, methodHandle, fieldHandle;
-            _tokenResolver.Invoke(token, out typeHandle, out methodHandle, out fieldHandle);
+            _tokenResolver.Invoke(token, out var typeHandle, out _, out _);
 
             return _getTypeFromHandleUnsafe.Invoke(typeHandle);
         }
 
         public MethodBase ResolveMethod(int token)
         {
-            IntPtr typeHandle, methodHandle, fieldHandle;
-            _tokenResolver.Invoke(token, out typeHandle, out methodHandle, out fieldHandle);
+            _tokenResolver.Invoke(token, out var typeHandle, out var methodHandle, out _);
 
             return (MethodBase) _getMethodBase.Invoke(null, new[]
             {
@@ -168,8 +162,7 @@ namespace Torch.Managers.PatchManager.MSIL
 
         public FieldInfo ResolveField(int token)
         {
-            IntPtr typeHandle, methodHandle, fieldHandle;
-            _tokenResolver.Invoke(token, out typeHandle, out methodHandle, out fieldHandle);
+            _tokenResolver.Invoke(token, out var typeHandle, out _, out var fieldHandle);
 
             return (FieldInfo) _getFieldInfo.Invoke(null, new[]
             {

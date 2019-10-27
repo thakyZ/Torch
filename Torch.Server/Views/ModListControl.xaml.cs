@@ -1,31 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Runtime.CompilerServices;
-using System.Windows.Threading;
-using VRage.Game;
 using NLog;
-using Torch.Server.Managers;
 using Torch.API.Managers;
-using Torch.Server.ViewModels;
-using Torch.Server.Annotations;
 using Torch.Collections;
+using Torch.Server.Annotations;
+using Torch.Server.Managers;
+using Torch.Server.ViewModels;
 using Torch.Views;
+using VRage.Game;
 
 namespace Torch.Server.Views
 {
@@ -37,7 +29,7 @@ namespace Torch.Server.Views
         private static Logger Log = LogManager.GetLogger(nameof(ModListControl));
         private InstanceManager _instanceManager;
         ModItemInfo _draggedMod;
-        bool _hasOrderChanged = false;
+        bool _hasOrderChanged;
         bool _isSortedByLoadOrder = true;
 
         //private List<BindingExpression> _bindingExpressions = new List<BindingExpression>();
@@ -56,11 +48,6 @@ namespace Torch.Server.Views
 
             // Gets called once all children are loaded
             //Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(ApplyStyles));
-        }
-
-        private void ModListControl_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            throw new NotImplementedException();
         }
 
         private void ResetSorting()

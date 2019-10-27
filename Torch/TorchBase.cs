@@ -2,30 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
-using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Runtime;
 using System.Runtime.CompilerServices;
-using System.Security.Principal;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using NLog;
-using ProtoBuf.Meta;
 using Sandbox;
-using Sandbox.Engine.Multiplayer;
-using Sandbox.Engine.Networking;
-using Sandbox.Engine.Platform.VideoMode;
-using Sandbox.Engine.Utils;
 using Sandbox.Game;
 using Sandbox.Game.Multiplayer;
 using Sandbox.Game.Screens.Helpers;
-using Sandbox.Game.World;
-using Sandbox.Graphics.GUI;
-using Sandbox.ModAPI;
 using SpaceEngineers.Game;
-using SpaceEngineers.Game.GUI;
 using Torch.API;
 using Torch.API.Managers;
 using Torch.API.ModAPI;
@@ -36,25 +22,11 @@ using Torch.Managers;
 using Torch.Managers.ChatManager;
 using Torch.Managers.PatchManager;
 using Torch.Patches;
-using Torch.Utils;
 using Torch.Session;
-using VRage;
-using VRage.Collections;
-using VRage.FileSystem;
-using VRage.Game;
-using VRage.Game.Common;
-using VRage.Game.Components;
-using VRage.Game.ObjectBuilder;
-using VRage.Game.SessionComponents;
-using VRage.GameServices;
-using VRage.Library;
-using VRage.ObjectBuilders;
+using Torch.Utils;
 using VRage.Platform.Windows;
 using VRage.Plugins;
-using VRage.Scripting;
-using VRage.Steam;
 using VRage.Utils;
-using VRageRender;
 
 namespace Torch
 {
@@ -83,7 +55,6 @@ namespace Torch
         /// Hack because *keen*.
         /// Use only if necessary, prefer dependency injection.
         /// </summary>
-        [Obsolete("This is a hack, don't use it.")]
         public static ITorchBase Instance { get; private set; }
 
         /// <inheritdoc />
@@ -92,15 +63,9 @@ namespace Torch
         /// <inheritdoc />
         public InformationalVersion TorchVersion { get; }
 
-        /// <inheritdoc />
         public Version GameVersion { get; private set; }
-
-        /// <inheritdoc />
+        
         public string[] RunArgs { get; set; }
-
-        /// <inheritdoc />
-        [Obsolete("Use GetManager<T>() or the [Dependency] attribute.")]
-        public IPluginManager Plugins { get; protected set; }
 
         /// <inheritdoc />
         public ITorchSession CurrentSession => Managers?.GetManager<ITorchSessionManager>()?.CurrentSession;
@@ -152,8 +117,6 @@ namespace Torch
 
             Managers = new DependencyManager();
 
-            Plugins = new PluginManager(this);
-
             var sessionManager = new TorchSessionManager(this);
             sessionManager.AddFactory((x) => Sync.IsServer ? new ChatManagerServer(this) : new ChatManagerClient(this));
             sessionManager.AddFactory((x) => Sync.IsServer ? new CommandManager(this) : null);
@@ -164,7 +127,7 @@ namespace Torch
             Managers.AddManager(new FilesystemManager(this));
             Managers.AddManager(new UpdateManager(this));
             Managers.AddManager(new EventManager(this));
-            Managers.AddManager(Plugins);
+            Managers.AddManager(new PluginManager(this));
             TorchAPI.Instance = this;
 
             GameStateChanged += (game, state) =>
@@ -377,7 +340,7 @@ namespace Torch
         }
 
 
-        private int _inProgressSaves = 0;
+        private int _inProgressSaves;
         /// <inheritdoc/>
         public virtual Task<GameSaveResult> Save(int timeoutMs = -1, bool exclusive = false)
         {
@@ -457,7 +420,7 @@ namespace Torch
         /// <inheritdoc/>
         public event TorchGameStateChangedDel GameStateChanged;
 
-        private static readonly HashSet<Assembly> _registeredCoreAssemblies = new HashSet<Assembly>();
+        private static readonly HashSet<Assembly> RegisteredCoreAssemblies = new HashSet<Assembly>();
 
         /// <summary>
         /// Registers a core (Torch) assembly with the system, including its
@@ -466,8 +429,8 @@ namespace Torch
         /// <param name="asm">Assembly to register</param>
         internal static void RegisterCoreAssembly(Assembly asm)
         {
-            lock (_registeredCoreAssemblies)
-                if (_registeredCoreAssemblies.Add(asm))
+            lock (RegisteredCoreAssemblies)
+                if (RegisteredCoreAssemblies.Add(asm))
                 {
                     ReflectedManager.Process(asm);
                     EventManager.AddDispatchShims(asm);
@@ -475,8 +438,7 @@ namespace Torch
                 }
         }
 
-        private static readonly HashSet<Assembly> _registeredAuxAssemblies = new HashSet<Assembly>();
-        private static readonly TimeSpan _gameStateChangeTimeout = TimeSpan.FromMinutes(1);
+        private static readonly HashSet<Assembly> RegisteredAuxAssemblies = new HashSet<Assembly>();
 
         /// <summary>
         /// Registers an auxillary (plugin) assembly with the system, including its
@@ -485,8 +447,8 @@ namespace Torch
         /// <param name="asm">Assembly to register</param>
         internal static void RegisterAuxAssembly(Assembly asm)
         {
-            lock (_registeredAuxAssemblies)
-                if (_registeredAuxAssemblies.Add(asm))
+            lock (RegisteredAuxAssemblies)
+                if (RegisteredAuxAssemblies.Add(asm))
                 {
                     ReflectedManager.Process(asm);
                     PatchManager.AddPatchShims(asm);

@@ -207,6 +207,7 @@
     <Compile Include="Collections\TransformComparer.cs" />
     <Compile Include="Collections\TransformEnumerator.cs" />
     <Compile Include="Commands\ConsoleCommandContext.cs" />
+    <Compile Include="Commands\Permissions\PermissionAttribute.cs" />
     <Compile Include="Event\EventShimAttribute.cs" />
     <Compile Include="Extensions\LinqExtensions.cs" />
     <Compile Include="Managers\ChatManager\ChatManagerClient.cs" />
@@ -260,8 +261,6 @@
     <Compile Include="Commands\CommandContext.cs" />
     <Compile Include="Commands\CommandManager.cs" />
     <Compile Include="Commands\CommandTree.cs" />
-    <Compile Include="Commands\Permissions\PermissionAttribute.cs" />
-    <Compile Include="Commands\Permissions\PermissonsSystem.cs" />
     <Compile Include="Commands\TorchCommands.cs" />
     <Compile Include="Managers\EntityManager.cs" />
     <Compile Include="Managers\FilesystemManager.cs" />

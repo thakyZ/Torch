@@ -1,12 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 using Torch.API.Managers;
 using Torch.API.Session;
-using VRage.Game.ModAPI;
 
 namespace Torch.API
 {
@@ -48,10 +44,6 @@ namespace Torch.API
         /// Configuration for the current instance.
         /// </summary>
         ITorchConfig Config { get; }
-
-        /// <inheritdoc cref="IPluginManager"/>
-        [Obsolete]
-        IPluginManager Plugins { get; }
 
         /// <inheritdoc cref="IDependencyManager"/>
         IDependencyManager Managers { get; }

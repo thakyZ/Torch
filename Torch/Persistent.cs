@@ -1,11 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 using NLog;
 
@@ -18,7 +14,7 @@ namespace Torch
     /// <typeparam name="T">Data class type</typeparam>
     public sealed class Persistent<T> : IDisposable where T : new()
     {
-        private static Logger _log = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Log = LogManager.GetCurrentClassLogger();
         public string Path { get; set; }
         private T _data;
         public T Data
@@ -90,7 +86,7 @@ namespace Torch
                 }
                 catch (Exception ex)
                 {
-                    _log.Error(ex);
+                    Log.Error(ex);
                     config = null;
                 }
             }

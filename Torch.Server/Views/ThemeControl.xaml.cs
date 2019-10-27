@@ -1,20 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Diagnostics;
-using System.Windows.Navigation;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Media;
-using System.Windows.Threading;
-using Torch.API.Managers;
+using System.Windows.Navigation;
 using Torch.API.Plugins;
-using Torch.Server.Annotations;
-using Torch.Server.Managers;
-using Torch.Server.ViewModels;
 
 namespace Torch.Server.Views
 {
@@ -31,12 +23,12 @@ namespace Torch.Server.Views
         /// <summary>
         /// Current theme other views can set their theme to when they first spawn
         /// </summary>
-        public static ResourceDictionary currentTheme = new ResourceDictionary() { Source = new Uri(@"/Views/Resources.xaml", UriKind.Relative) };
+        public static ResourceDictionary CurrentTheme = new ResourceDictionary() { Source = new Uri(@"/Views/Resources.xaml", UriKind.Relative) };
 
         /// <summary>
         /// The current torch window and config.
         /// </summary>
-        public TorchUI uiSource;
+        public TorchUI UiSource { get; set; }
         private TorchConfig _torchConfig;
 
         /// <summary>
@@ -83,11 +75,11 @@ namespace Torch.Server.Views
 
         public void ChangeTheme(Uri uri)
         {
-            uiSource.Resources.MergedDictionaries.Clear();
+            UiSource.Resources.MergedDictionaries.Clear();
             var resource = new ResourceDictionary() { Source = uri };
-            uiSource.Resources.MergedDictionaries.Add(resource);
+            UiSource.Resources.MergedDictionaries.Add(resource);
             UpdateDynamicControls?.Invoke(resource);
-            currentTheme = resource;
+            CurrentTheme = resource;
         }
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)

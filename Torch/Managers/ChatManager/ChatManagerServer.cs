@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using NLog;
 using Sandbox.Engine.Multiplayer;
 using Sandbox.Engine.Networking;
@@ -15,9 +10,7 @@ using Torch.API;
 using Torch.API.Managers;
 using Torch.Managers.PatchManager;
 using Torch.Utils;
-using VRage;
 using VRage.Collections;
-using VRage.Library.Collections;
 using VRage.Network;
 
 namespace Torch.Managers.ChatManager
@@ -45,8 +38,7 @@ namespace Torch.Managers.ChatManager
     
     public class ChatManagerServer : ChatManagerClient, IChatManagerServer
     {
-        private static readonly Logger _log = LogManager.GetCurrentClassLogger();
-        private static readonly Logger _chatLog = LogManager.GetLogger("Chat");
+        private static readonly Logger ChatLog = LogManager.GetLogger("Chat");
 
         private readonly HashSet<ulong> _muted = new HashSet<ulong>();
         /// <inheritdoc />
@@ -128,7 +120,7 @@ namespace Torch.Managers.ChatManager
                 Font = font ?? Torch.Config.ChatColor,
                 Target = Sync.Players.TryGetIdentityId(targetSteamId)
             };
-            _chatLog.Info($"{author} (to {GetMemberName(targetSteamId)}): {message}");
+            ChatLog.Info($"{author} (to {GetMemberName(targetSteamId)}): {message}");
             MyMultiplayerBase.SendScriptedChatMessage(ref scripted);
         }
 
@@ -148,14 +140,14 @@ namespace Torch.Managers.ChatManager
             if (_muted.Contains(message.Author))
             {
                 consumed = true;
-                _chatLog.Warn($"MUTED USER: [{torchMsg.Channel}:{torchMsg.Target}] {torchMsg.Author}: {torchMsg.Message}");
+                ChatLog.Warn($"MUTED USER: [{torchMsg.Channel}:{torchMsg.Target}] {torchMsg.Author}: {torchMsg.Message}");
                 return;
             }
 
             MessageProcessing?.Invoke(torchMsg, ref consumed);
 
             if (!consumed)
-                _chatLog.Info($"[{torchMsg.Channel}:{torchMsg.Target}] {torchMsg.Author}: {torchMsg.Message}");
+                ChatLog.Info($"[{torchMsg.Channel}:{torchMsg.Target}] {torchMsg.Author}: {torchMsg.Message}");
         }
 
         public static string GetMemberName(ulong steamId)

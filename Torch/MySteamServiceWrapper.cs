@@ -1,6 +1,5 @@
 using System;
 using System.Reflection;
-using System.Windows.Data;
 using VRage.GameServices;
 
 namespace Torch
@@ -10,15 +9,15 @@ namespace Torch
     /// </summary>
     public static class MySteamServiceWrapper
     {
-        private static readonly MethodInfo _getGameService;
+        private static readonly MethodInfo GetGameService;
 
-        public static IMyGameService Static => (IMyGameService)_getGameService.Invoke(null, null);
+        public static IMyGameService Static => (IMyGameService)GetGameService.Invoke(null, null);
 
         static MySteamServiceWrapper()
         {
             var type = Type.GetType("VRage.Steam.MySteamService, VRage.Steam");
             var prop = type.GetProperty("Static", BindingFlags.Static | BindingFlags.Public);
-            _getGameService = prop.GetGetMethod();
+            GetGameService = prop.GetGetMethod();
         }
 
         public static IMyGameService Init(bool dedicated, uint appId)

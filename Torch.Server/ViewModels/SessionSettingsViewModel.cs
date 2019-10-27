@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using Torch;
-using Torch.Collections;
-using Torch.Views;
 using VRage.Game;
 using VRage.Library.Utils;
-using VRage.Serialization;
+
+// ReSharper disable InconsistentNaming
 
 namespace Torch.Server.ViewModels
 {

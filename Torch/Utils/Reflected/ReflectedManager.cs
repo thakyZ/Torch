@@ -6,40 +6,18 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Text;
-using System.Threading.Tasks;
 using NLog;
-using Sandbox.Engine.Multiplayer;
-using Torch.API;
-using Torch.Managers.PatchManager;
 using Torch.Utils.Reflected;
-using PropertyAttributes = System.Reflection.PropertyAttributes;
 
 namespace Torch.Utils
 {
-    #region MemberInfoAttributes
-
-    #endregion
-
-    #region FieldPropGetSet
-
-    #endregion
-
-    #region Invoker
-
-    #endregion
-
-    #region EventReplacer
-
-    #endregion
-
     /// <summary>
     /// Automatically calls <see cref="ReflectedManager.Process(Assembly)"/> for every assembly already loaded, and every assembly that is loaded in the future.
     /// </summary>
     public static class ReflectedManager
     {
-        private static readonly Logger _log = LogManager.GetCurrentClassLogger();
-        private static readonly HashSet<Type> _processedTypes = new HashSet<Type>();
+        private static readonly Logger Log = LogManager.GetCurrentClassLogger();
+        private static readonly HashSet<Type> ProcessedTypes = new HashSet<Type>();
 
         /// <summary>
         /// Ensures all reflected fields and methods contained in the given type are initialized
@@ -47,7 +25,7 @@ namespace Torch.Utils
         /// <param name="t">Type to process</param>
         public static void Process(Type t)
         {
-            if (_processedTypes.Add(t))
+            if (ProcessedTypes.Add(t))
             {
                 foreach (FieldInfo field in t.GetFields(BindingFlags.Static | BindingFlags.Instance |
                                                         BindingFlags.Public | BindingFlags.NonPublic))
@@ -56,7 +34,7 @@ namespace Torch.Utils
                     {
 #if DEBUG
                         if (Process(field))
-                            _log?.Trace(
+                            Log?.Trace(
                                 $"Field {field.DeclaringType?.FullName}#{field.Name} = {field.GetValue(null) ?? "null"}");
 #else
                         Process(field);
@@ -64,7 +42,7 @@ namespace Torch.Utils
                     }
                     catch (Exception e)
                     {
-                        _log?.Error(e.InnerException ?? e,
+                        Log?.Error(e.InnerException ?? e,
                             $"Unable to fill {field.DeclaringType?.FullName}#{field.Name}. {(e.InnerException ?? e).Message}");
                     }
                 }
@@ -254,7 +232,7 @@ namespace Torch.Utils
                 field.SetValue(null,
                     Expression.Lambda(Expression.Call(instanceExp, methodInstance, argExp), paramExp)
                         .Compile());
-                _log.Trace(
+                Log.Trace(
                     $"Reflecting field {field.DeclaringType?.FullName}#{field.Name} with {methodInstance.DeclaringType?.FullName}#{methodInstance.Name}");
             }
         }
@@ -364,7 +342,7 @@ namespace Torch.Utils
             il.Emit(OpCodes.Ret);
 
             field.SetValue(null, dynMethod.CreateDelegate(field.FieldType));
-            _log.Trace(
+            Log.Trace(
                 $"Reflecting field {field.DeclaringType?.FullName}#{field.Name} with {field.DeclaringType?.FullName}#{field.Name}");
         }
 

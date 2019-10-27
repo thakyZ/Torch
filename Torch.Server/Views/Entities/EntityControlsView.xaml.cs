@@ -13,7 +13,7 @@ namespace Torch.Server.Views.Entities
             InitializeComponent();
 
             ThemeControl.UpdateDynamicControls += UpdateResourceDict;
-            UpdateResourceDict(ThemeControl.currentTheme);
+            UpdateResourceDict(ThemeControl.CurrentTheme);
         }
 
         public void UpdateResourceDict(ResourceDictionary dictionary)

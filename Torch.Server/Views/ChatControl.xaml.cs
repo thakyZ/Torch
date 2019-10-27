@@ -1,34 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Windows.Threading;
-using NLog;
-using Torch;
-using Sandbox;
-using Sandbox.Engine.Multiplayer;
 using Sandbox.Game.Gui;
-using Sandbox.Game.Multiplayer;
 using Sandbox.Game.World;
 using Torch.API;
 using Torch.API.Managers;
 using Torch.API.Session;
-using Torch.Managers;
-using Torch.Server.Managers;
-using VRage.Game;
 
 namespace Torch.Server
 {
@@ -37,7 +21,6 @@ namespace Torch.Server
     /// </summary>
     public partial class ChatControl : UserControl
     {
-        private static Logger _log = LogManager.GetCurrentClassLogger();
         private ITorchServer _server;
 
         public ChatControl()
@@ -116,13 +99,13 @@ namespace Torch.Server
             InsertMessage(msg);
         }
 
-        private static readonly Dictionary<string, Brush> _brushes = new Dictionary<string, Brush>();
+        private static readonly Dictionary<string, Brush> Brushes = new Dictionary<string, Brush>();
         private static Brush LookupBrush(string font)
         {
-            if (_brushes.TryGetValue(font, out Brush result))
+            if (Brushes.TryGetValue(font, out var result))
                 return result;
-            Brush brush = typeof(Brushes).GetField(font, BindingFlags.Static)?.GetValue(null) as Brush ?? Brushes.Blue;
-            _brushes.Add(font, brush);
+            Brush brush = typeof(Brushes).GetField(font, BindingFlags.Static)?.GetValue(null) as Brush ?? System.Windows.Media.Brushes.Blue;
+            Brushes.Add(font, brush);
             return brush;
         }
 
@@ -136,10 +119,10 @@ namespace Torch.Server
                 switch (msg.Channel)
                 {
                     case ChatChannel.Faction:
-                        span.Inlines.Add(new Run($"[{MySession.Static.Factions.TryGetFactionById(msg.Target)?.Tag ?? "???"}] ") { Foreground = Brushes.Green });
+                        span.Inlines.Add(new Run($"[{MySession.Static.Factions.TryGetFactionById(msg.Target)?.Tag ?? "???"}] ") { Foreground = System.Windows.Media.Brushes.Green });
                         break;
                     case ChatChannel.Private:
-                        span.Inlines.Add(new Run($"[to {MySession.Static.Players.TryGetIdentity(msg.Target)?.DisplayName ?? "???"}] ") { Foreground = Brushes.DeepPink });
+                        span.Inlines.Add(new Run($"[to {MySession.Static.Players.TryGetIdentity(msg.Target)?.DisplayName ?? "???"}] ") { Foreground = System.Windows.Media.Brushes.DeepPink });
                         break;
                 }
                 span.Inlines.Add(new Run(msg.Author) { Foreground = LookupBrush(msg.Font) });

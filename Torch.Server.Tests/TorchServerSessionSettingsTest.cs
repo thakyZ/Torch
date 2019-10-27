@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using Torch.Server.ViewModels;
 using VRage.Game;
 using Xunit;
-using System.ComponentModel.DataAnnotations;
 
 namespace Torch.Server.Tests
 {

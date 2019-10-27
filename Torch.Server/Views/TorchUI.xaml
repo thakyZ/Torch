@@ -5,7 +5,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Torch.Server"
         xmlns:views="clr-namespace:Torch.Server.Views"
-        xmlns:converters="clr-namespace:Torch.Server.Views.Converters"
         mc:Ignorable="d"
         Title="Torch"
         Name="MainWindow">
@@ -14,7 +13,6 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-            <converters:InverseBooleanConverter x:Key="InverseBool"/>
         </ResourceDictionary>
     </Window.Resources>
     <!--

@@ -2,22 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 using NLog;
-using NLog.Fluent;
 using Sandbox;
 using Sandbox.Engine.Multiplayer;
 using Sandbox.Engine.Networking;
 using Sandbox.Game.Gui;
 using Sandbox.Game.World;
-using Steamworks;
 using Torch.API;
 using Torch.API.Managers;
 using Torch.Managers;
 using Torch.Utils;
-using Torch.ViewModels;
 using VRage.Game;
 using VRage.Game.ModAPI;
 using VRage.GameServices;
@@ -28,7 +23,7 @@ namespace Torch.Server.Managers
 {
     public class MultiplayerManagerDedicated : MultiplayerManagerBase, IMultiplayerManagerServer
     {
-        private static readonly Logger _log = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Log = LogManager.GetCurrentClassLogger();
 
 #pragma warning disable 649
         [ReflectedGetter(Name = "m_members")]
@@ -42,9 +37,6 @@ namespace Torch.Server.Managers
         public IReadOnlyList<ulong> BannedPlayers => MySandboxGame.ConfigDedicated.Banned;
 
         private Dictionary<ulong, ulong> _gameOwnerIds = new Dictionary<ulong, ulong>();
-
-        [Dependency]
-        private InstanceManager _instanceManager;
 
         /// <inheritdoc />
         public MultiplayerManagerDedicated(ITorchBase torch) : base(torch)
@@ -136,7 +128,7 @@ namespace Torch.Server.Managers
                 new Action<ulong, JoinResult, ulong>(ValidateAuthTicketResponse), MyGameService.GameServer);
             _gameServerUserGroupStatusReplacer.Replace(new Action<ulong, ulong, bool, bool>(UserGroupStatusResponse),
                 MyGameService.GameServer);
-            _log.Info("Inserted steam authentication intercept");
+            Log.Info("Inserted steam authentication intercept");
         }
 
         /// <inheritdoc/>
@@ -146,7 +138,7 @@ namespace Torch.Server.Managers
                 _gameServerValidateAuthTicketReplacer.Restore(MyGameService.GameServer);
             if (_gameServerUserGroupStatusReplacer != null && _gameServerUserGroupStatusReplacer.Replaced)
                 _gameServerUserGroupStatusReplacer.Restore(MyGameService.GameServer);
-            _log.Info("Removed steam authentication intercept");
+            Log.Info("Removed steam authentication intercept");
             base.Detach();
         }
 
@@ -189,8 +181,8 @@ namespace Torch.Server.Managers
         private static Action<MyMultiplayerBase, ulong> _raiseClientKicked;
 #pragma warning restore 649
 
-        private const int _waitListSize = 32;
-        private readonly List<WaitingForGroup> _waitingForGroupLocal = new List<WaitingForGroup>(_waitListSize);
+        private const int WAIT_LIST_SIZE = 32;
+        private readonly List<WaitingForGroup> _waitingForGroupLocal = new List<WaitingForGroup>(WAIT_LIST_SIZE);
 
         private struct WaitingForGroup
         {
@@ -215,19 +207,19 @@ namespace Torch.Server.Managers
 
             Torch.CurrentSession.KeenSession.PromotedUsers.TryGetValue(steamId, out MyPromoteLevel promoteLevel);
 
-            _log.Debug($"ValidateAuthTicketResponse(user={steamId}, response={response}, owner={steamOwner}, permissions={promoteLevel})");
+            Log.Debug($"ValidateAuthTicketResponse(user={steamId}, response={response}, owner={steamOwner}, permissions={promoteLevel})");
 
-            _log.Info($"Connection attempt by {steamId} from {ip}");
+            Log.Info($"Connection attempt by {steamId} from {ip}");
             
             if (Players.ContainsKey(steamId))
             {
-                _log.Warn($"Player {steamId} has already joined!");
+                Log.Warn($"Player {steamId} has already joined!");
                 UserRejected(steamId, JoinResult.AlreadyJoined);
             }
             else if (Torch.CurrentSession.KeenSession.OnlineMode == MyOnlineModeEnum.OFFLINE &&
                      promoteLevel < MyPromoteLevel.Admin)
             {
-                _log.Warn($"Rejecting user {steamId}, world is set to offline and user is not admin.");
+                Log.Warn($"Rejecting user {steamId}, world is set to offline and user is not admin.");
                 UserRejected(steamId, JoinResult.TicketCanceled);
             }
             else if (MySandboxGame.ConfigDedicated.GroupID == 0uL)
@@ -237,7 +229,7 @@ namespace Torch.Server.Managers
             else if (MyGameService.GameServer.RequestGroupStatus(steamId, MySandboxGame.ConfigDedicated.GroupID))
                 lock (_waitingForGroupLocal)
                 {
-                    if (_waitingForGroupLocal.Count >= _waitListSize)
+                    if (_waitingForGroupLocal.Count >= WAIT_LIST_SIZE)
                         _waitingForGroupLocal.RemoveAt(0);
                     _waitingForGroupLocal.Add(new WaitingForGroup(steamId, response, steamOwner));
                 }
@@ -260,7 +252,7 @@ namespace Torch.Server.Managers
                 var config = (TorchConfig) Torch.Config;
                 if (config.EnableWhitelist && !config.Whitelist.Contains(info.SteamID))
                 {
-                    _log.Warn($"Rejecting user {info.SteamID} because they are not whitelisted in Torch.cfg.");
+                    Log.Warn($"Rejecting user {info.SteamID} because they are not whitelisted in Torch.cfg.");
                     internalAuth = JoinResult.NotInGroup;
                 }
                 else if (MySandboxGame.ConfigDedicated.Reserved.Contains(info.SteamID))
@@ -295,7 +287,7 @@ namespace Torch.Server.Managers
                 JoinResult verdict;
                 if (task.IsFaulted)
                 {
-                    _log.Error(task.Exception, $"Future validation verdict faulted");
+                    Log.Error(task.Exception, $"Future validation verdict faulted");
                     verdict = JoinResult.TicketCanceled;
                 }
                 else
@@ -337,7 +329,7 @@ namespace Torch.Server.Managers
         private void UserAccepted(ulong steamId)
         {
             _userAcceptedImpl.Invoke((MyDedicatedServerBase) MyMultiplayer.Static, steamId);
-            base.RaiseClientJoined(steamId);
+            RaiseClientJoined(steamId);
         }
 
         #endregion

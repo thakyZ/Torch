@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Net;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Xml.Serialization;
 using NLog;
 using Torch.API;
 using Torch.API.Managers;
@@ -22,7 +19,6 @@ using Torch.Utils;
 
 namespace Torch.Managers
 {
-    /// <inheritdoc />
     public class PluginManager : Manager, IPluginManager
     {
         private class PluginItem
@@ -98,8 +94,6 @@ namespace Torch.Managers
                     foreach (ITorchPlugin plugin in _plugins.Values)
                         _mgr.UnregisterPluginCommands(plugin);
                     return;
-                case TorchSessionState.Loading:
-                case TorchSessionState.Unloaded:
                 default:
                     return;
             }
@@ -474,17 +468,6 @@ namespace Torch.Managers
             {
                 _log.Error($"The plugin '{manifest.Name}' does not have an implementation of {nameof(ITorchPlugin)}, not loading.");
                 return;
-            }
-
-            // Backwards compatibility for PluginAttribute.
-            var pluginAttr = pluginType.GetCustomAttribute<PluginAttribute>();
-            if (pluginAttr != null)
-            {
-                _log.Warn($"Plugin '{manifest.Name}' is using the obsolete {nameof(PluginAttribute)}, using info from attribute if necessary.");
-                manifest.Version = manifest.Version ?? pluginAttr.Version.ToString();
-                manifest.Name = manifest.Name ?? pluginAttr.Name;
-                if (manifest.Guid == default(Guid))
-                    manifest.Guid = pluginAttr.Guid;
             }
 
             _log.Info($"Loading plugin '{manifest.Name}' ({manifest.Version})");

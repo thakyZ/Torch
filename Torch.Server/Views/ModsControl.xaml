@@ -14,8 +14,8 @@
             </ListView.ItemTemplate>
         </ListView>
         <DockPanel>
-            <Button x:Name="RemBtn" Width="70" Content="Remove" Margin="3" Click="remBtn_Click" DockPanel.Dock="Right"/>
-            <Button x:Name="AddBtn" Width="70" Content="Add" Click="addBtn_Click" Margin="3" DockPanel.Dock="Right"/>
+            <Button Width="70" Content="Remove" Margin="3" Click="remBtn_Click" DockPanel.Dock="Right"/>
+            <Button Width="70" Content="Add" Click="addBtn_Click" Margin="3" DockPanel.Dock="Right"/>
             <Label Content="Mod ID:"/>
             <TextBox x:Name="ModIdBox" Margin="3" DockPanel.Dock="Left"/>
         </DockPanel>

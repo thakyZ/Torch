@@ -3,11 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:viewModels="clr-namespace:Torch.Server.ViewModels"
-             xmlns:managers="clr-namespace:Torch.Server.Managers"
-             xmlns:system="clr-namespace:System;assembly=mscorlib"
-             xmlns:validationRules="clr-namespace:Torch.Server.Views.ValidationRules"
-             xmlns:views="clr-namespace:Torch.Views;assembly=Torch"
              mc:Ignorable="d">
     <Grid>
         <Grid.RowDefinitions>

@@ -10,26 +10,24 @@ namespace Torch.Utils
     /// </summary>
     public class ReflectedEventReplacer
     {
-        private const BindingFlags BindFlagAll = BindingFlags.Static |
-                                                 BindingFlags.Instance |
-                                                 BindingFlags.Public |
-                                                 BindingFlags.NonPublic;
+        private const BindingFlags BIND_FLAG_ALL = BindingFlags.Static |
+                                                   BindingFlags.Instance |
+                                                   BindingFlags.Public |
+                                                   BindingFlags.NonPublic;
 
         private object _instance;
         private Func<IEnumerable<Delegate>> _backingStoreReader;
         private Action<Delegate> _callbackAdder;
         private Action<Delegate> _callbackRemover;
-        private readonly ReflectedEventReplaceAttribute _attributes;
         private readonly HashSet<Delegate> _registeredCallbacks = new HashSet<Delegate>();
         private readonly MethodInfo _targetMethodInfo;
 
         internal ReflectedEventReplacer(ReflectedEventReplaceAttribute attr)
         {
-            _attributes = attr;
             FieldInfo backingStore = GetEventBackingField(attr.EventName, attr.EventDeclaringType);
             if (backingStore == null)
                 throw new ArgumentException($"Unable to find backing field for event {attr.EventDeclaringType.FullName}#{attr.EventName}");
-            EventInfo evtInfo = ReflectedManager.GetFieldPropRecursive(attr.EventDeclaringType, attr.EventName, BindFlagAll, (a, b, c) => a.GetEvent(b, c));
+            EventInfo evtInfo = ReflectedManager.GetFieldPropRecursive(attr.EventDeclaringType, attr.EventName, BIND_FLAG_ALL, (a, b, c) => a.GetEvent(b, c));
             if (evtInfo == null)
                 throw new ArgumentException($"Unable to find event info for event {attr.EventDeclaringType.FullName}#{attr.EventName}");
             _backingStoreReader = () => GetEventsInternal(_instance, backingStore);
@@ -37,14 +35,14 @@ namespace Torch.Utils
             _callbackRemover = (x) => evtInfo.RemoveEventHandler(_instance, x);
             if (attr.TargetParameters == null)
             {
-                _targetMethodInfo = attr.TargetDeclaringType.GetMethod(attr.TargetName, BindFlagAll);
+                _targetMethodInfo = attr.TargetDeclaringType.GetMethod(attr.TargetName, BIND_FLAG_ALL);
                 if (_targetMethodInfo == null)
                     throw new ArgumentException($"Unable to find method {attr.TargetDeclaringType.FullName}#{attr.TargetName} to replace");
             }
             else
             {
                 _targetMethodInfo =
-                    attr.TargetDeclaringType.GetMethod(attr.TargetName, BindFlagAll, null, attr.TargetParameters, null);
+                    attr.TargetDeclaringType.GetMethod(attr.TargetName, BIND_FLAG_ALL, null, attr.TargetParameters, null);
                 if (_targetMethodInfo == null)
                     throw new ArgumentException($"Unable to find method {attr.TargetDeclaringType.FullName}#{attr.TargetName}){string.Join(", ", attr.TargetParameters.Select(x => x.FullName))}) to replace");
             }
@@ -117,7 +115,7 @@ namespace Torch.Utils
             while (type != null && eventField == null)
             {
                 for (var i = 0; i < _backingFieldForEvent.Length && eventField == null; i++)
-                    eventField = type.GetField(string.Format(_backingFieldForEvent[i], eventName), BindFlagAll);
+                    eventField = type.GetField(string.Format(_backingFieldForEvent[i], eventName), BIND_FLAG_ALL);
                 type = type.BaseType;
             }
             return eventField;

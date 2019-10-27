@@ -1,23 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using Sandbox;
 using Sandbox.Engine.Multiplayer;
 using Sandbox.Game.Entities;
 using Sandbox.Game.World;
 using Steamworks;
-using VRage.Game.ModAPI;
 
 namespace Torch.Utils
 {
     public static class MiscExtensions
     {
-        private static readonly ThreadLocal<WeakReference<byte[]>> _streamBuffer = new ThreadLocal<WeakReference<byte[]>>(() => new WeakReference<byte[]>(null));
+        private static readonly ThreadLocal<WeakReference<byte[]>> StreamBuffer = new ThreadLocal<WeakReference<byte[]>>(() => new WeakReference<byte[]>(null));
 
         private static long LengthSafe(this Stream stream)
         {
@@ -34,7 +29,7 @@ namespace Torch.Utils
         public static byte[] ReadToEnd(this Stream stream, int optionalDataLength = -1)
         {
             byte[] buffer;
-            if (!_streamBuffer.Value.TryGetTarget(out buffer))
+            if (!StreamBuffer.Value.TryGetTarget(out buffer))
                 buffer = new byte[stream.LengthSafe()];
             var initialBufferSize = optionalDataLength > 0 ? optionalDataLength : stream.LengthSafe();
             if (buffer.Length < initialBufferSize)
@@ -53,7 +48,7 @@ namespace Torch.Utils
             }
             var result = new byte[streamPosition];
             Array.Copy(buffer, 0, result, 0, result.Length);
-            _streamBuffer.Value.SetTarget(buffer);
+            StreamBuffer.Value.SetTarget(buffer);
             return result;
         }
 

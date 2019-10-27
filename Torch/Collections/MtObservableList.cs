@@ -2,9 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Torch.Utils;
 
 namespace Torch.Collections
@@ -61,8 +58,7 @@ namespace Torch.Collections
                     new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item, index));
             }
         }
-
-        /// <inheritdoc/>
+        
         public void RemoveAt(int index)
         {
             using (Lock.WriteUsing())
@@ -96,8 +92,7 @@ namespace Torch.Collections
                 }
             }
         }
-
-        /// <inheritdoc/>
+        
         public void RemoveWhere(Func<T, bool> predicate)
         {
             for (int i = Count - 1; i >= 0; i--)

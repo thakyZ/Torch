@@ -1,17 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Torch.Server.Views.Entities
 {
@@ -25,7 +13,7 @@ namespace Torch.Server.Views.Entities
             InitializeComponent();
 
             ThemeControl.UpdateDynamicControls += UpdateResourceDict;
-            UpdateResourceDict(ThemeControl.currentTheme);
+            UpdateResourceDict(ThemeControl.CurrentTheme);
         }
 
         public void UpdateResourceDict(ResourceDictionary dictionary)

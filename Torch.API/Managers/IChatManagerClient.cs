@@ -1,14 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Sandbox.Engine.Multiplayer;
 using Sandbox.Game.Gui;
-using Sandbox.Game.Multiplayer;
 using VRage.Game;
-using VRage.Network;
-using VRage.Replication;
 
 namespace Torch.API.Managers
 {
@@ -40,7 +33,9 @@ namespace Torch.API.Managers
         /// <param name="author">Author's name</param>
         /// <param name="authorSteamId">Author's steam ID</param>
         /// <param name="message">Message</param>
+        /// <param name="target">Target player or faction ID</param>
         /// <param name="font">Font</param>
+        /// <param name="channel">Target chat channel</param>
         public TorchChatMessage(string author, ulong authorSteamId, string message, ChatChannel channel, long target, string font = MyFontEnum.Blue)
         {
             Timestamp = DateTime.Now;
@@ -57,7 +52,9 @@ namespace Torch.API.Managers
         /// </summary>
         /// <param name="authorSteamId">Author's steam ID</param>
         /// <param name="message">Message</param>
+        /// <param name="target">Target player or faction ID</param>
         /// <param name="font">Font</param>
+        /// <param name="channel">Target chat channel</param>
         public TorchChatMessage(ulong authorSteamId, string message, ChatChannel channel, long target, string font = MyFontEnum.Blue)
         {
             Timestamp = DateTime.Now;

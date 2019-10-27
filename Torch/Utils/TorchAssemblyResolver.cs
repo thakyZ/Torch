@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using NLog;
 
 namespace Torch.Utils
@@ -14,7 +11,7 @@ namespace Torch.Utils
     /// </summary>
     public class TorchAssemblyResolver : IDisposable
     {
-        private static readonly Logger _log = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Log = LogManager.GetCurrentClassLogger();
 
         private readonly Dictionary<string, Assembly> _assemblies = new Dictionary<string, Assembly>();
         private readonly string[] _paths;
@@ -38,7 +35,7 @@ namespace Torch.Utils
             return path.StartsWith(_removablePathPrefix) ? path.Substring(_removablePathPrefix.Length) : path;
         }
 
-        private static readonly string[] _tryExtensions = {".dll", ".exe"};
+        private static readonly string[] TryExtensions = {".dll", ".exe"};
 
         private Assembly CurrentDomainOnAssemblyResolve(object sender, ResolveEventArgs args)
         {
@@ -59,12 +56,12 @@ namespace Torch.Utils
                 {
                     try
                     {
-                        foreach (var tryExt in _tryExtensions)
+                        foreach (var tryExt in TryExtensions)
                         {
                             string assemblyPath = Path.Combine(path, assemblyName + tryExt);
                             if (!File.Exists(assemblyPath))
                                 continue;
-                            _log.Trace("Loading {0} from {1}", assemblyName, SimplifyPath(assemblyPath));
+                            Log.Trace("Loading {0} from {1}", assemblyName, SimplifyPath(assemblyPath));
                             LogManager.Flush();
                             Assembly asm = Assembly.LoadFrom(assemblyPath);
                             _assemblies.Add(assemblyName, asm);

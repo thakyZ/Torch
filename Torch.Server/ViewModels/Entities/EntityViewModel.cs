@@ -1,16 +1,10 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Windows.Controls;
-using NLog;
 using Sandbox.Game.Entities;
-using Sandbox.Game.World;
 using Torch.API.Managers;
 using Torch.Collections;
 using Torch.Server.Managers;
 using Torch.Utils;
-using VRage.Game.Entity;
-using VRage.Game.ModAPI;
 using VRage.ModAPI;
 using VRageMath;
 
@@ -19,8 +13,6 @@ namespace Torch.Server.ViewModels.Entities
     public class EntityViewModel : ViewModel
     {
         protected EntityTreeViewModel Tree { get; }
-
-        private static Logger Log = LogManager.GetCurrentClassLogger();
 
         private IMyEntity _backing;
         public IMyEntity Entity

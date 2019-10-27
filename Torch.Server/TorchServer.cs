@@ -3,15 +3,12 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using NLog;
 using Sandbox;
-using Sandbox.Engine.Networking;
 using Sandbox.Game.Multiplayer;
 using Sandbox.Game.World;
 using Torch.API;
@@ -23,13 +20,6 @@ using Torch.Mod.Messages;
 using Torch.Server.Commands;
 using Torch.Server.Managers;
 using Torch.Utils;
-using VRage;
-using VRage.Dedicated;
-using VRage.Dedicated.RemoteAPI;
-using VRage.GameServices;
-using VRage.Scripting;
-using VRage.Steam;
-using Timer = System.Threading.Timer;
 
 #endregion
 
@@ -65,24 +55,17 @@ namespace Torch.Server
             sessionManager.AddFactory(x => new MultiplayerManagerDedicated(this));
         }
 
-        /// <inheritdoc />
         public float SimulationRatio { get => _simRatio; set => SetValue(ref _simRatio, value); }
 
         /// <inheritdoc />
         public TimeSpan ElapsedPlayTime { get => _elapsedPlayTime; set => SetValue(ref _elapsedPlayTime, value); }
 
-        /// <inheritdoc />
-        public Thread GameThread { get; private set; }
-
-        /// <inheritdoc />
         public bool IsRunning { get => _isRunning; set => SetValue(ref _isRunning, value); }
 
         public bool CanRun { get => _canRun; set => SetValue(ref _canRun, value); }
-
-        /// <inheritdoc />
+        
         public InstanceManager DedicatedInstance { get; }
-
-        /// <inheritdoc />
+        
         public string InstanceName => Config?.InstanceName;
 
         /// <inheritdoc />

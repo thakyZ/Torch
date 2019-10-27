@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Torch.Mod.Messages
 {
@@ -9,10 +7,6 @@ namespace Torch.Mod.Messages
     /// </summary>
     internal class IncomingMessage : MessageBase
     {
-        public IncomingMessage()
-        {
-        }
-
         public override void ProcessClient()
         {
             throw new Exception();

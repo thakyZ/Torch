@@ -1,18 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
-using Sandbox.Game.Entities;
-using Sandbox.Game.Entities.Character;
-using Torch.Server.ViewModels.Entities;
-using VRage.Game.ModAPI;
-using VRage.ModAPI;
 using System.Windows.Threading;
 using NLog;
+using Sandbox.Game.Entities;
+using Sandbox.Game.Entities.Character;
 using Torch.Collections;
-using Torch.Server.Views.Entities;
+using Torch.Server.ViewModels.Entities;
 
 namespace Torch.Server.ViewModels
 {
@@ -27,7 +20,7 @@ namespace Torch.Server.ViewModels
             BlockCount,
             DistFromCenter,
         }
-        private static readonly Logger _log = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Log = LogManager.GetCurrentClassLogger();
 
         //TODO: these should be sorted sets for speed
         public MtObservableSortedDictionary<long, GridViewModel> Grids { get; set; } = new MtObservableSortedDictionary<long, GridViewModel>();
@@ -100,7 +93,7 @@ namespace Torch.Server.ViewModels
             }
             catch (Exception e)
             {
-                _log.Error(e);
+                Log.Error(e);
                 // ignore error "it's only UI"
             }
         }
@@ -127,7 +120,7 @@ namespace Torch.Server.ViewModels
             }
             catch (Exception e)
             {
-                _log.Error(e);
+                Log.Error(e);
                 // ignore error "it's only UI"
             }
         }

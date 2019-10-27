@@ -1,25 +1,19 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Sandbox.ModAPI;
 using Torch.Mod.Messages;
 using VRage;
 using VRage.Collections;
 using VRage.Game.ModAPI;
-using VRage.Network;
 using VRage.Utils;
-using Task = ParallelTasks.Task;
 
 namespace Torch.Mod
 {
     public static class ModCommunication
     {
         public const ushort NET_ID = 4352;
-        private static bool _closing = false;
+        private static bool _closing;
         private static BlockingCollection<MessageBase> _processing;
         private static MyConcurrentPool<IncomingMessage> _messagePool;
         private static List<IMyPlayer> _playerCache;

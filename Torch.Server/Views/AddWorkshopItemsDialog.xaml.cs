@@ -1,17 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+﻿using System.Text.RegularExpressions;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Torch.Server
 {
@@ -28,7 +16,7 @@ namespace Torch.Server
 
         private void Done_Clicked(object sender, RoutedEventArgs e)
         {
-            var text = urlBlock.Text;
+            var text = UrlBlock.Text;
             var lines = text.Split('\n');
             Result = new ulong[lines.Length];
             for (var i = 0; i < lines.Length; i++)

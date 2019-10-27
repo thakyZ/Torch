@@ -1,17 +1,10 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Havok;
 using NLog;
-using NLog.Fluent;
 using Sandbox;
-using Sandbox.Engine.Analytics;
 using Sandbox.Engine.Multiplayer;
 using Sandbox.Engine.Networking;
 using Sandbox.Engine.Platform.VideoMode;
@@ -25,7 +18,6 @@ using SpaceEngineers.Game.GUI;
 using Torch.Utils;
 using VRage;
 using VRage.Audio;
-using VRage.Dedicated;
 using VRage.FileSystem;
 using VRage.Game;
 using VRage.Game.ObjectBuilder;
@@ -41,7 +33,7 @@ namespace Torch
 {
     public class VRageGame
     {
-        private static readonly ILogger _log = LogManager.GetCurrentClassLogger();
+        private static readonly ILogger Log = LogManager.GetCurrentClassLogger();
 
 #pragma warning disable 649
         [ReflectedGetter(Name = "m_plugins", Type = typeof(MyPlugins))]
@@ -72,9 +64,9 @@ namespace Torch
         private SpaceEngineersGame _game;
         private readonly Thread _updateThread;
 
-        private bool _startGame = false;
+        private bool _startGame;
         private readonly AutoResetEvent _commandChanged = new AutoResetEvent(false);
-        private bool _destroyGame = false;
+        private bool _destroyGame;
 
         private readonly AutoResetEvent _stateChangedEvent = new AutoResetEvent(false);
         private GameState _state;
@@ -137,13 +129,13 @@ namespace Torch
         {
             bool dedicated = Sandbox.Engine.Platform.Game.IsDedicated;
             Environment.SetEnvironmentVariable("SteamAppId", _appSteamId.ToString());
-            var service = MySteamServiceWrapper.Init(dedicated, _appSteamId);
-            MyServiceManager.Instance.AddService<IMyGameService>(service);
-            var serviceInstance = MySteamUgcService.Create(_appSteamId, service);
-            MyServiceManager.Instance.AddService<IMyUGCService>(serviceInstance);
+            var steamService = MySteamServiceWrapper.Init(dedicated, _appSteamId);
+            MyServiceManager.Instance.AddService(steamService);
+            var ugcService = MySteamUgcService.Create(_appSteamId, steamService);
+            MyServiceManager.Instance.AddService(ugcService);
             if (dedicated && !MyGameService.HasGameServer)
             {
-                _log.Warn("Steam service is not running! Please reinstall dedicated server.");
+                Log.Warn("Steam service is not running! Please reinstall dedicated server.");
                 return;
             }
 
@@ -208,7 +200,7 @@ namespace Torch
             }
 
             // Loads object builder serializers. Intuitive, right?
-            _log.Info("Setting up serializers");
+            Log.Info("Setting up serializers");
             MyPlugins.RegisterGameAssemblyFile(MyPerGameSettings.GameModAssembly);
             if (MyPerGameSettings.GameModBaseObjBuildersAssembly != null)
                 MyPlugins.RegisterBaseGameObjectBuildersAssemblyFile(MyPerGameSettings.GameModBaseObjBuildersAssembly);

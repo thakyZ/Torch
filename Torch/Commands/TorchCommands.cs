@@ -1,18 +1,12 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Timers;
 using NLog;
-using Sandbox.Game.Multiplayer;
-using Sandbox.ModAPI;
-using Steamworks;
-using Torch;
 using Torch.API;
 using Torch.API.Managers;
 using Torch.API.Session;
@@ -27,10 +21,10 @@ namespace Torch.Commands
 {
     public class TorchCommands : CommandModule
     {
-        private static bool _restartPending = false;
-        private static bool _cancelRestart = false;
-        private bool _stopPending = false;
-        private bool _cancelStop = false;
+        private static bool _restartPending;
+        private static bool _cancelRestart;
+        private bool _stopPending;
+        private bool _cancelStop;
         private static readonly Logger Log = LogManager.GetCurrentClassLogger();
         
         [Command("whatsmyip")]

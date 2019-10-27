@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using Torch.Managers.PatchManager.Transpile;
-using Torch.Utils;
 
 namespace Torch.Managers.PatchManager.MSIL
 {
@@ -30,7 +28,6 @@ namespace Torch.Managers.PatchManager.MSIL
             if (lt == null)
                 throw new ArgumentException($"Target {operand?.GetType().Name} must be of same type {GetType().Name}", nameof(operand));
             lt.Value = Value;
-            ;
         }
 
         /// <inheritdoc />

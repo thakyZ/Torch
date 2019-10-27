@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using System.ComponentModel;
 using System.Configuration.Install;
-using System.Linq;
 using System.ServiceProcess;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Torch.Server
 {
@@ -28,7 +23,7 @@ namespace Torch.Server
             _serviceInstaller.Description = "Service for Torch (SE Dedicated Server)";
             _serviceInstaller.StartType = ServiceStartMode.Manual;
 
-            _serviceInstaller.ServiceName = TorchService.Name;
+            _serviceInstaller.ServiceName = TorchService.NAME;
 
             Installers.Add(serviceProcessInstaller);
             Installers.Add(_serviceInstaller);

@@ -1,23 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using Newtonsoft.Json;
-using NLog;
 using Torch.API.WebAPI;
 using Torch.Collections;
 using Torch.Server.Annotations;
@@ -29,8 +16,6 @@ namespace Torch.Server.Views
     /// </summary>
     public partial class PluginBrowser : Window, INotifyPropertyChanged
     {
-        private static Logger Log = LogManager.GetCurrentClassLogger();
-
         public MtObservableList<PluginItem> Plugins { get; set; } = new MtObservableList<PluginItem>();
         public PluginItem CurrentItem { get; set; }
 

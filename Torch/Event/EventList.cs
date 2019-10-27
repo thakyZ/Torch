@@ -38,7 +38,7 @@ namespace Torch.Event
             }
         }
 
-        private bool _dispatchersDirty = false;
+        private bool _dispatchersDirty;
         private readonly List<EventHandlerData> _dispatchers = new List<EventHandlerData>();
 
         private int _bakedCount;

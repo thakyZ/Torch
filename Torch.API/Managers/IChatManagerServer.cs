@@ -1,18 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using VRage.Collections;
-using VRage.Network;
+﻿using VRage.Collections;
 
 namespace Torch.API.Managers
 {
-
     /// <summary>
     /// Callback used to indicate the server has recieved a message to process and forward on to others.
     /// </summary>
-    /// <param name="authorId">Steam ID of the user sending a message</param>
     /// <param name="msg">Message the user is attempting to send</param>
     /// <param name="consumed">If true, this event has been consumed and should be ignored</param>
     public delegate void MessageProcessingDel(TorchChatMessage msg, ref bool consumed);

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -10,7 +9,7 @@ namespace Torch.Managers
 {
     public sealed class DependencyManager : IDependencyManager
     {
-        private static readonly Logger _log = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Log = LogManager.GetCurrentClassLogger();
 
         private class DependencyInfo
         {
@@ -171,7 +170,7 @@ namespace Torch.Managers
                         }
                     }
                     else if (!dependency.Optional && _parentProviders.All(x => x.GetManager(dependency.DependencyType) == null))
-                        _log.Warn("Unable to satisfy dependency {0} ({1}) of {2}.", dependency.DependencyType.Name,
+                        Log.Warn("Unable to satisfy dependency {0} ({1}) of {2}.", dependency.DependencyType.Name,
                             dependency.Field.Name, manager.Instance.GetType().Name);
                 }
                 manager.UnsolvedDependencies = inFactor;
@@ -195,13 +194,13 @@ namespace Torch.Managers
                 dagQueue.RemoveRange(dagQueue.Count - tmpQueue.Count, tmpQueue.Count);
                 if (tmpQueue.Count == 0)
                 {
-                    _log.Fatal("Dependency loop detected in the following managers:");
+                    Log.Fatal("Dependency loop detected in the following managers:");
                     foreach (ManagerInstance manager in dagQueue)
                     {
-                        _log.Fatal("   + {0} has {1} unsolved dependencies.", manager.Instance.GetType().FullName, manager.UnsolvedDependencies);
-                        _log.Fatal("        - Dependencies: {0}",
+                        Log.Fatal("   + {0} has {1} unsolved dependencies.", manager.Instance.GetType().FullName, manager.UnsolvedDependencies);
+                        Log.Fatal("        - Dependencies: {0}",
                             string.Join(", ", manager.Dependencies.Select(x => x.DependencyType.Name + (x.Optional ? " (Optional)" : ""))));
-                        _log.Fatal("        - Dependents: {0}",
+                        Log.Fatal("        - Dependents: {0}",
                             string.Join(", ", manager.Dependents.Select(x => x.Instance.GetType().Name)));
                     }
                     throw new InvalidOperationException("Unable to satisfy all required manager dependencies");
@@ -213,13 +212,13 @@ namespace Torch.Managers
                 // tmpQueue.Sort(); If we have priorities this is where to sort them.
                 _orderedManagers.AddRange(tmpQueue);
             }
-            _log.Debug("Dependency tree satisfied.  Load order is:");
+            Log.Debug("Dependency tree satisfied.  Load order is:");
             foreach (ManagerInstance manager in _orderedManagers)
             {
-                _log.Debug("   - {0}", manager.Instance.GetType().FullName);
-                _log.Debug("        - Dependencies: {0}",
+                Log.Debug("   - {0}", manager.Instance.GetType().FullName);
+                Log.Debug("        - Dependencies: {0}",
                     string.Join(", ", manager.Dependencies.Select(x => x.DependencyType.Name + (x.Optional ? " (Optional)" : ""))));
-                _log.Debug("        - Dependents: {0}",
+                Log.Debug("        - Dependents: {0}",
                     string.Join(", ", manager.Dependents.Select(x => x.Instance.GetType().Name)));
             }
 
@@ -236,7 +235,7 @@ namespace Torch.Managers
             #endregion
         }
 
-        private bool _initialized = false;
+        private bool _initialized;
 
         /// <summary>
         /// Initializes the dependency manager, and all its registered managers.

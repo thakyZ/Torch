@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NLog;
 using Sandbox.Game.World;
 using Torch.API;
@@ -11,7 +8,6 @@ using Torch.API.Managers;
 using Torch.API.Session;
 using Torch.Managers;
 using Torch.Mod;
-using Torch.Session;
 using VRage.Game;
 
 namespace Torch.Session
@@ -21,7 +17,7 @@ namespace Torch.Session
     /// </summary>
     public class TorchSessionManager : Manager, ITorchSessionManager
     {
-        private static readonly Logger _log = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Log = LogManager.GetCurrentClassLogger();
         private TorchSession _currentSession;
 
         private readonly Dictionary<ulong, MyObjectBuilder_Checkpoint.ModItem> _overrideMods;
@@ -100,18 +96,18 @@ namespace Torch.Session
             {
                 if (_currentSession != null)
                 {
-                    _log.Warn($"Override old torch session {_currentSession.KeenSession.Name}");
+                    Log.Warn($"Override old torch session {_currentSession.KeenSession.Name}");
                     _currentSession.Detach();
                 }
 
-                _log.Info($"Starting new torch session for {MySession.Static.Name}");
+                Log.Info($"Starting new torch session for {MySession.Static.Name}");
 
                 _currentSession = new TorchSession(Torch, MySession.Static);
                 SetState(TorchSessionState.Loading);
             }
             catch (Exception e)
             {
-                _log.Error(e);
+                Log.Error(e);
                 throw;
             }
         }
@@ -122,7 +118,7 @@ namespace Torch.Session
             {
                 if (_currentSession == null)
                 {
-                    _log.Warn("Session loaded event occurred when we don't have a session.");
+                    Log.Warn("Session loaded event occurred when we don't have a session.");
                     return;
                 }
                 foreach (SessionManagerFactoryDel factory in _factories)
@@ -132,12 +128,12 @@ namespace Torch.Session
                         CurrentSession.Managers.AddManager(manager);
                 }
                 (CurrentSession as TorchSession)?.Attach();
-                _log.Info($"Loaded torch session for {MySession.Static.Name}");
+                Log.Info($"Loaded torch session for {MySession.Static.Name}");
                 SetState(TorchSessionState.Loaded);
             }
             catch (Exception e)
             {
-                _log.Error(e);
+                Log.Error(e);
                 throw;
             }
         }
@@ -148,16 +144,16 @@ namespace Torch.Session
             {
                 if (_currentSession == null)
                 {
-                    _log.Warn("Session unloading event occurred when we don't have a session.");
+                    Log.Warn("Session unloading event occurred when we don't have a session.");
                     return;
                 }
-                _log.Info($"Unloading torch session for {_currentSession.KeenSession.Name}");
+                Log.Info($"Unloading torch session for {_currentSession.KeenSession.Name}");
                 SetState(TorchSessionState.Unloading);
                 _currentSession.Detach();
             }
             catch (Exception e)
             {
-                _log.Error(e);
+                Log.Error(e);
                 throw;
             }
         }
@@ -168,16 +164,16 @@ namespace Torch.Session
             {
                 if (_currentSession == null)
                 {
-                    _log.Warn("Session unloading event occurred when we don't have a session.");
+                    Log.Warn("Session unloading event occurred when we don't have a session.");
                     return;
                 }
-                _log.Info($"Unloaded torch session for {_currentSession.KeenSession.Name}");
+                Log.Info($"Unloaded torch session for {_currentSession.KeenSession.Name}");
                 SetState(TorchSessionState.Unloaded);
                 _currentSession = null;
             }
             catch (Exception e)
             {
-                _log.Error(e);
+                Log.Error(e);
                 throw;
             }
         }

@@ -1,21 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.ServiceProcess;
 using System.Threading;
-using NLog;
-using Torch.API;
+using System.Threading.Tasks;
 
 namespace Torch.Server
 {
     class TorchService : ServiceBase
     {
-        private static readonly Logger Log = LogManager.GetCurrentClassLogger();
-        public const string Name = "Torch (SEDS)";
+        public const string NAME = "Torch (SEDS)";
         private Initializer _initializer;
         private string[] _args;
 
@@ -24,9 +18,9 @@ namespace Torch.Server
             _args = args;
             var workingDir = new FileInfo(typeof(TorchService).Assembly.Location).Directory.ToString();
             Directory.SetCurrentDirectory(workingDir);
-            _initializer = new Initializer(workingDir);
+            _initializer = new Initializer();
 
-            ServiceName = Name;
+            ServiceName = NAME;
             CanHandleSessionChangeEvent = false;
             CanPauseAndContinue = false;
             CanStop = true;

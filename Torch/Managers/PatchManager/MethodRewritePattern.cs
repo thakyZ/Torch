@@ -31,10 +31,10 @@ namespace Torch.Managers.PatchManager
         public class MethodRewriteSet : IEnumerable<MethodInfo>
         {
             private readonly MethodRewriteSet _backingSet;
-            private bool _sortDirty = false;
+            private bool _sortDirty;
             private readonly List<MethodInfo> _backingList = new List<MethodInfo>();
 
-            private int _hasChanges = 0;
+            private int _hasChanges;
 
             internal bool HasChanges(bool reset = false)
             {

@@ -1,23 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using NLog;
 using Torch.Managers.PatchManager.MSIL;
 using Torch.Managers.PatchManager.Transpile;
-using Torch.Utils;
 
 namespace Torch.Managers.PatchManager
 {
     internal class DecoratedMethod : MethodRewritePattern
     {
-        private static readonly Logger _log = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Log = LogManager.GetCurrentClassLogger();
         private readonly MethodBase _method;
 
         internal DecoratedMethod(MethodBase method) : base(null)
@@ -26,7 +23,7 @@ namespace Torch.Managers.PatchManager
         }
 
         private long _revertAddress;
-        private byte[] _revertData = null;
+        private byte[] _revertData;
         private GCHandle? _pinnedPatch;
 
         internal bool HasChanged()
@@ -45,7 +42,7 @@ namespace Torch.Managers.PatchManager
 
                 if (Prefixes.Count == 0 && Suffixes.Count == 0 && Transpilers.Count == 0 && PostTranspilers.Count == 0)
                     return;
-                _log.Log(PrintMode != 0 ? LogLevel.Info : LogLevel.Debug,
+                Log.Log(PrintMode != 0 ? LogLevel.Info : LogLevel.Debug,
                     $"Begin patching {_method.DeclaringType?.FullName}#{_method.Name}({string.Join(", ", _method.GetParameters().Select(x => x.ParameterType.Name))})");
                 var patch = ComposePatchedMethod();
 
@@ -53,12 +50,12 @@ namespace Torch.Managers.PatchManager
                 var newAddress = AssemblyMemory.GetMethodBodyStart(patch);
                 _revertData = AssemblyMemory.WriteJump(_revertAddress, newAddress);
                 _pinnedPatch = GCHandle.Alloc(patch);
-                _log.Log(PrintMode != 0 ? LogLevel.Info : LogLevel.Debug,
+                Log.Log(PrintMode != 0 ? LogLevel.Info : LogLevel.Debug,
                     $"Done patching {_method.DeclaringType?.FullName}#{_method.Name}({string.Join(", ", _method.GetParameters().Select(x => x.ParameterType.Name))})");
             }
             catch (Exception exception)
             {
-                _log.Fatal(exception, $"Error patching {_method.DeclaringType?.FullName}#{_method}");
+                Log.Fatal(exception, $"Error patching {_method.DeclaringType?.FullName}#{_method}");
                 throw;
             }
         }
@@ -67,7 +64,7 @@ namespace Torch.Managers.PatchManager
         {
             if (_pinnedPatch.HasValue)
             {
-                _log.Debug(
+                Log.Debug(
                     $"Revert {_method.DeclaringType?.FullName}#{_method.Name}({string.Join(", ", _method.GetParameters().Select(x => x.ParameterType.Name))})");
                 AssemblyMemory.WriteMemory(_revertAddress, _revertData);
                 _revertData = null;
@@ -78,7 +75,7 @@ namespace Torch.Managers.PatchManager
 
         #region Create
 
-        private int _patchSalt = 0;
+        private int _patchSalt;
 
         private DynamicMethod AllocatePatchMethod()
         {
@@ -134,7 +131,7 @@ namespace Torch.Managers.PatchManager
             Type res = typeBuilder.CreateType();
             asmBuilder.Save(Path.GetFileName(target));
             foreach (var method in res.GetMethods(BindingFlags.Public | BindingFlags.Static))
-                _log.Info($"Information " + method);
+                Log.Info($"Information " + method);
         }
 
         public DynamicMethod ComposePatchedMethod()
@@ -155,14 +152,14 @@ namespace Torch.Managers.PatchManager
                         dumpTarget?.WriteLine((err ? "ERROR " : "") + msg);
                     if (!PrintMode.HasFlag(mode)) return;
                     if (err)
-                        _log.Error(msg);
+                        Log.Error(msg);
                     else
-                        _log.Info(msg);
+                        Log.Info(msg);
                 }
 
                 if (PrintMsil || DumpTarget != null)
                 {
-                    lock (_log)
+                    lock (Log)
                     {
                         var ctx = new MethodContext(_method);
                         ctx.Read();
@@ -184,11 +181,11 @@ namespace Torch.Managers.PatchManager
                 }
                 catch
                 {
-                    lock (_log)
+                    lock (Log)
                     {
                         var ctx = new MethodContext(method);
                         ctx.Read();
-                        MethodTranspiler.IntegrityAnalysis((err, msg) => _log.Warn(msg), ctx.Instructions);
+                        MethodTranspiler.IntegrityAnalysis((err, msg) => Log.Warn(msg), ctx.Instructions);
                     }
 
                     throw;
@@ -196,7 +193,7 @@ namespace Torch.Managers.PatchManager
 
                 if (PrintMsil || DumpTarget != null)
                 {
-                    lock (_log)
+                    lock (Log)
                     {
                         var ctx = new MethodContext(method);
                         ctx.Read();
@@ -267,7 +264,7 @@ namespace Torch.Managers.PatchManager
                     {
                         if (existingParam.Type != requiredType)
                             throw new ArgumentException(
-                                $"Trying to use injected local {param.Name} for {m.DeclaringType?.FullName}#{m.ToString()} with type {requiredType} but a local with the same name already exists with type {existingParam.Type}",
+                                $"Trying to use injected local {param.Name} for {m.DeclaringType?.FullName}#{m} with type {requiredType} but a local with the same name already exists with type {existingParam.Type}",
                                 param.Name);
                     }
                     else

@@ -1,20 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Reflection;
-using System.Linq;
-using NLog;
 using SteamKit2;
 
 namespace Torch.Utils.SteamWorkshopTools
 {
     public static class KeyValueExtensions
     {
-        private static Logger Log = LogManager.GetLogger("SteamWorkshopService");
-
         public static T GetValueOrDefault<T>(this KeyValue kv, string key)
         {
             kv.TryGetValueOrDefault<T>(key, out T result);
@@ -22,7 +13,7 @@ namespace Torch.Utils.SteamWorkshopTools
         }
         public static bool TryGetValueOrDefault<T>(this KeyValue kv, string key, out T typedValue)
         {
-            var match = kv.Children?.Find((KeyValue item) => item.Name == key);
+            var match = kv.Children?.Find(item => item.Name == key);
             object result = default(T);
             if (match == null)
             {

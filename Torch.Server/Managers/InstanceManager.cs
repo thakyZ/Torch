@@ -1,30 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
-using Havok;
 using NLog;
-using Sandbox.Engine.Networking;
 using Sandbox.Engine.Utils;
-using Sandbox.Game;
-using Sandbox.Game.Gui;
 using Torch.API;
-using Torch.API.Managers;
 using Torch.Collections;
 using Torch.Managers;
 using Torch.Mod;
 using Torch.Server.ViewModels;
-using VRage;
 using VRage.FileSystem;
 using VRage.Game;
-using VRage.Game.ObjectBuilder;
 using VRage.ObjectBuilders;
-using VRage.Plugins;
 
 namespace Torch.Server.Managers
 {
@@ -35,8 +22,6 @@ namespace Torch.Server.Managers
         public event Action<ConfigDedicatedViewModel> InstanceLoaded;
         public ConfigDedicatedViewModel DedicatedConfig { get; set; }
         private static readonly Logger Log = LogManager.GetLogger(nameof(InstanceManager));
-        [Dependency]
-        private FilesystemManager _filesystemManager;
 
         public InstanceManager(ITorchBase torchInstance) : base(torchInstance)
         {
@@ -76,10 +61,9 @@ namespace Torch.Server.Managers
                     if (!string.IsNullOrEmpty(f) && File.Exists(Path.Combine(f, "Sandbox.sbc")))
                         DedicatedConfig.Worlds.Add(new WorldViewModel(f));
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     Log.Error("Failed to load world at path: " + f);
-                    continue;
                 }
             }
 
@@ -107,7 +91,7 @@ namespace Torch.Server.Managers
                     DedicatedConfig.Worlds.Add(worldInfo);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 Log.Error("Failed to load world at path: " + worldPath);
                 DedicatedConfig.LoadWorld = null;
@@ -268,7 +252,7 @@ namespace Torch.Server.Managers
                 FolderName = Path.GetFileName(worldPath);
                 LoadSandbox();
             }
-            catch (ArgumentException ex)
+            catch (ArgumentException)
             {
                 Log.Error($"World view model failed to load the path: {worldPath} Please ensure this is a valid path.");
                 throw; //rethrow to be handled further up the stack

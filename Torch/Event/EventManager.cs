@@ -16,9 +16,9 @@ namespace Torch.Event
     /// </summary>
     public class EventManager : Manager, IEventManager
     {
-        private static readonly Logger _log = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Log = LogManager.GetCurrentClassLogger();
 
-        private static readonly Dictionary<Type, IEventList> _eventLists = new Dictionary<Type, IEventList>();
+        private static readonly Dictionary<Type, IEventList> EventLists = new Dictionary<Type, IEventList>();
 
         internal static void AddDispatchShims(Assembly asm)
         {
@@ -27,31 +27,31 @@ namespace Torch.Event
                     AddDispatchShim(type);
         }
 
-        private static readonly HashSet<Type> _dispatchShims = new HashSet<Type>();
+        private static readonly HashSet<Type> DispatchShims = new HashSet<Type>();
         private static void AddDispatchShim(Type type)
         {
-            lock (_dispatchShims)
-                if (!_dispatchShims.Add(type))
+            lock (DispatchShims)
+                if (!DispatchShims.Add(type))
                     return;
             if (!type.IsSealed || !type.IsAbstract)
-                _log.Warn($"Registering type {type.FullName} as an event dispatch type, even though it isn't declared singleton");
+                Log.Warn($"Registering type {type.FullName} as an event dispatch type, even though it isn't declared singleton");
             var listsFound = 0;
             RuntimeHelpers.RunClassConstructor(type.TypeHandle);
             foreach (FieldInfo field in type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static))
                 if (field.FieldType.IsGenericType && field.FieldType.GetGenericTypeDefinition() == typeof(EventList<>))
                 {
                     Type eventType = field.FieldType.GenericTypeArguments[0];
-                    if (_eventLists.ContainsKey(eventType))
-                        _log.Error($"Ignore event dispatch list {type.FullName}#{field.Name}; we already have one.");
+                    if (EventLists.ContainsKey(eventType))
+                        Log.Error($"Ignore event dispatch list {type.FullName}#{field.Name}; we already have one.");
                     else
                     {
-                        _eventLists.Add(eventType, (IEventList)field.GetValue(null));
+                        EventLists.Add(eventType, (IEventList)field.GetValue(null));
                         listsFound++;
                     }
 
                 }
             if (listsFound == 0)
-                _log.Warn($"Registering type {type.FullName} as an event dispatch type, even though it has no event lists.");
+                Log.Warn($"Registering type {type.FullName} as an event dispatch type, even though it has no event lists.");
         }
 
 
@@ -75,8 +75,7 @@ namespace Torch.Event
                 });
             return exploreType.BaseType != null ? enumerable.Concat(EventHandlers(exploreType.BaseType)) : enumerable;
         }
-
-        /// <inheritdoc/>
+        
         private static void RegisterHandlerInternal(IEventHandler instance)
         {
             var foundHandler = false;
@@ -88,7 +87,7 @@ namespace Torch.Event
                 if (eventType.IsInterface)
                 {
                     var foundList = false;
-                    foreach (KeyValuePair<Type, IEventList> kv in _eventLists)
+                    foreach (KeyValuePair<Type, IEventList> kv in EventLists)
                         if (eventType.IsAssignableFrom(kv.Key))
                         {
                             kv.Value.AddHandler(handler, instance);
@@ -97,15 +96,15 @@ namespace Torch.Event
                     if (foundList)
                         continue;
                 }
-                else if (_eventLists.TryGetValue(eventType, out IEventList list))
+                else if (EventLists.TryGetValue(eventType, out IEventList list))
                 {
                     list.AddHandler(handler, instance);
                     continue;
                 }
-                _log.Error($"Unable to find event handler list for event type {eventType.FullName}");
+                Log.Error($"Unable to find event handler list for event type {eventType.FullName}");
             }
             if (!foundHandler)
-                _log.Warn($"Found no handlers in {instance.GetType().FullName} or base types");
+                Log.Warn($"Found no handlers in {instance.GetType().FullName} or base types");
 
         }
 
@@ -115,7 +114,7 @@ namespace Torch.Event
         /// <param name="instance">Instance</param>
         private static void UnregisterHandlerInternal(IEventHandler instance)
         {
-            foreach (IEventList list in _eventLists.Values)
+            foreach (IEventList list in EventLists.Values)
                 list.RemoveHandlers(instance);
         }
 

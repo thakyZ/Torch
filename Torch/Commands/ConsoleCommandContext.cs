@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Text;
 using Torch.API;
 using Torch.API.Managers;
 using Torch.API.Plugins;
@@ -9,8 +8,7 @@ namespace Torch.Commands
     public class ConsoleCommandContext : CommandContext
     {
         public List<TorchChatMessage> Responses = new List<TorchChatMessage>();
-        private bool _flag;
-        
+
         /// <inheritdoc />
         public ConsoleCommandContext(ITorchBase torch, ITorchPlugin plugin, ulong steamIdSender, string rawArgs = null, List<string> args = null) 
             : base(torch, plugin, steamIdSender, rawArgs, args) { }

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NLog;
-using Sandbox.Game.World;
+﻿using Sandbox.Game.World;
 using Torch.API;
 using Torch.API.Managers;
 using Torch.API.Session;
@@ -14,8 +8,6 @@ namespace Torch.Session
 {
     public class TorchSession : ITorchSession
     {
-        private static readonly Logger _log = LogManager.GetCurrentClassLogger();
-
         /// <summary>
         /// The Torch instance this session is bound to
         /// </summary>

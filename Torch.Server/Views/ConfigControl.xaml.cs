@@ -6,13 +6,11 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Media;
 using System.Windows.Threading;
 using Torch.API.Managers;
 using Torch.Server.Annotations;
 using Torch.Server.Managers;
 using Torch.Server.ViewModels;
-using Torch.Views;
 using VRage.Game.ModAPI;
 
 namespace Torch.Server.Views
@@ -22,12 +20,12 @@ namespace Torch.Server.Views
     /// </summary>
     public partial class ConfigControl : UserControl, INotifyPropertyChanged
     {
-        private InstanceManager _instanceManager;
+        private readonly InstanceManager _instanceManager;
 
         private bool _configValid;
         public bool ConfigValid { get => _configValid; private set { _configValid = value; OnPropertyChanged(); } }
 
-        private List<BindingExpression> _bindingExpressions = new List<BindingExpression>();
+        private readonly List<BindingExpression> _bindingExpressions = new List<BindingExpression>();
 
         public ConfigControl()
         {

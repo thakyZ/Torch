@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using NLog;
-using Torch.API;
 using Torch.Managers.PatchManager;
 using Torch.Utils;
 using VRage.Utils;
@@ -16,7 +12,7 @@ namespace Torch.Managers
     [PatchShim]
     internal static class KeenLogPatch
     {
-        private static readonly Logger _log = LogManager.GetLogger("Keen");
+        private static readonly Logger Log = LogManager.GetLogger("Keen");
 
 #pragma warning disable 649
         [ReflectedMethodInfo(typeof(MyLog), nameof(MyLog.Log), Parameters = new[] { typeof(MyLogSeverity), typeof(StringBuilder) })]
@@ -87,7 +83,7 @@ namespace Torch.Managers
             }
             catch (Exception e)
             {
-                _log.Error(e);
+                Log.Error(e);
                 return _tmpStringBuilder.Value.Clear();
             }
             //return _tmpStringBuilder.Value.Clear().Append(' ', _getIndentByThread(log, _getThreadId(log)) * 3);
@@ -95,49 +91,49 @@ namespace Torch.Managers
 
         private static bool PrefixWriteLine(MyLog __instance, string msg)
         {
-            _log.Debug(PrepareLog(__instance).Append(msg));
+            Log.Debug(PrepareLog(__instance).Append(msg));
             return false;
         }
 
         private static bool PrefixWriteLineConsole(MyLog __instance, string msg)
         {
-            _log.Info(PrepareLog(__instance).Append(msg));
+            Log.Info(PrepareLog(__instance).Append(msg));
             return false;
         }
 
         private static bool PrefixAppendToClosedLog(MyLog __instance, string text)
         {
-            _log.Info(PrepareLog(__instance).Append(text));
+            Log.Info(PrepareLog(__instance).Append(text));
             return false;
         }
         private static bool PrefixWriteLineOptions(MyLog __instance, string message, LoggingOptions option)
         {
             if (__instance.LogFlag(option))
-                _log.Info(PrepareLog(__instance).Append(message));
+                Log.Info(PrepareLog(__instance).Append(message));
             return false;
         }
 
         private static bool PrefixAppendToClosedLogException(Exception e)
         {
-            _log.Error(e);
+            Log.Error(e);
             return false;
         }
 
         private static bool PrefixWriteLineException(Exception ex)
         {
-            _log.Error(ex);
+            Log.Error(ex);
             return false;
         }
 
         private static bool PrefixLogFormatted(MyLog __instance, MyLogSeverity severity, string format, object[] args)
         {
-            _log.Log(LogLevelFor(severity), PrepareLog(__instance).AppendFormat(format, args));
+            Log.Log(LogLevelFor(severity), PrepareLog(__instance).AppendFormat(format, args));
             return false;
         }
 
         private static bool PrefixLogStringBuilder(MyLog __instance, MyLogSeverity severity, StringBuilder builder)
         {
-            _log.Log(LogLevelFor(severity), PrepareLog(__instance).Append(builder));
+            Log.Log(LogLevelFor(severity), PrepareLog(__instance).Append(builder));
             return false;
         }
 

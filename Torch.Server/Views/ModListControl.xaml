@@ -3,8 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:viewModels="clr-namespace:Torch.Server.ViewModels"   
-             xmlns:s="clr-namespace:System"
+             xmlns:viewModels="clr-namespace:Torch.Server.ViewModels"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              MouseMove="UserControl_MouseMove">
@@ -40,7 +39,7 @@
                 <RowDefinition Height="80px"/>
             </Grid.RowDefinitions>
         
-            <DataGrid Name="ModList" Grid.Column="0" Grid.ColumnSpan="1" ItemsSource="{Binding UpdateSourceTrigger=PropertyChanged}"
+            <DataGrid Name="ModList" Grid.Column="0" ItemsSource="{Binding UpdateSourceTrigger=PropertyChanged}"
                       Sorting="ModList_Sorting"
                       SelectionMode="Single"
                       SelectionUnit="FullRow"

@@ -1,46 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Xml;
-using System.Xml.Serialization;
 using System.IO;
+using System.Linq;
 using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
 using NLog;
 using SteamKit2;
-using System.Net.Http;
 
 namespace Torch.Utils.SteamWorkshopTools
 {
     public class WebAPI
     {
         private static Logger Log = LogManager.GetLogger("SteamWorkshopService");
-        public const uint AppID = 244850U;
+        public const uint APP_ID = 244850U;
         public string Username { get; private set; }
-        private string password;
+        private string _password;
         public bool IsReady { get; private set; }
         public bool IsRunning { get; private set; }
-        private TaskCompletionSource<bool> logonTaskCompletionSource;
+        private TaskCompletionSource<bool> _logonTaskCompletionSource;
 
-        private SteamClient steamClient;
-        private CallbackManager cbManager;
-        private SteamUser steamUser;
+        private readonly SteamClient _steamClient;
+        private readonly CallbackManager _cbManager;
+        private SteamUser _steamUser;
 
         private static WebAPI _instance;
-        public static WebAPI Instance
-        {
-            get
-            {
-                return _instance ?? (_instance = new WebAPI());
-            }
-        }
+        public static WebAPI Instance => _instance ?? (_instance = new WebAPI());
 
         private WebAPI()
         {
-            steamClient = new SteamClient();
-            cbManager = new CallbackManager(steamClient);
+            _steamClient = new SteamClient();
+            _cbManager = new CallbackManager(_steamClient);
 
             IsRunning = true;
         }
@@ -53,27 +43,27 @@ namespace Torch.Utils.SteamWorkshopTools
                 throw new ArgumentNullException("Password can't be null if user is not anonymous!");
 
             Username = user;
-            password = pw;
+            _password = pw;
 
-            logonTaskCompletionSource = new TaskCompletionSource<bool>();
+            _logonTaskCompletionSource = new TaskCompletionSource<bool>();
 
-            steamUser = steamClient.GetHandler<SteamUser>();
-            cbManager.Subscribe<SteamClient.ConnectedCallback>(OnConnected);
-            cbManager.Subscribe<SteamClient.DisconnectedCallback>(OnDisconnected);
-            cbManager.Subscribe<SteamUser.LoggedOnCallback>(OnLoggedOn);
-            cbManager.Subscribe<SteamUser.LoggedOffCallback>(OnLoggedOff);
+            _steamUser = _steamClient.GetHandler<SteamUser>();
+            _cbManager.Subscribe<SteamClient.ConnectedCallback>(OnConnected);
+            _cbManager.Subscribe<SteamClient.DisconnectedCallback>(OnDisconnected);
+            _cbManager.Subscribe<SteamUser.LoggedOnCallback>(OnLoggedOn);
+            _cbManager.Subscribe<SteamUser.LoggedOffCallback>(OnLoggedOff);
 
             Log.Info("Connecting to Steam...");
 
-            steamClient.Connect();
+            _steamClient.Connect();
 
-            await logonTaskCompletionSource.Task;
-            return logonTaskCompletionSource.Task.Result;
+            await _logonTaskCompletionSource.Task;
+            return _logonTaskCompletionSource.Task.Result;
         }
 
         public void CancelLogon()
         {
-            logonTaskCompletionSource?.SetCanceled();
+            _logonTaskCompletionSource?.SetCanceled();
         }
 
         public async Task<Dictionary<ulong, PublishedItemDetails>> GetPublishedFileDetails(IEnumerable<ulong> workshopIds)
@@ -107,7 +97,7 @@ namespace Torch.Utils.SteamWorkshopTools
                 if (allFilesDetails == null)
                     return null;
                 //fileDetails = remoteStorage.Call(HttpMethod.Post, "GetPublishedFileDetails", 1, new Dictionary<string, string>() { { "itemcount", workshopIds.Count().ToString() }, { "publishedfileids", workshopIds.ToString() } });
-                var detailsList = allFilesDetails?.Children.Find((KeyValue kv) => kv.Name == "publishedfiledetails")?.Children;
+                var detailsList = allFilesDetails?.Children.Find(kv => kv.Name == "publishedfiledetails")?.Children;
                 var resultCount = allFilesDetails?.GetValueOrDefault<int>("resultcount");
                 if( detailsList == null || resultCount == null)
                 {
@@ -165,18 +155,15 @@ namespace Torch.Utils.SteamWorkshopTools
         [Obsolete("Space Engineers has transitioned to Steam's UGC api, therefore this method might not always work!")]
         public async Task DownloadPublishedFile(PublishedItemDetails fileDetails, string dir, string name = null)
         {
-            var fullPath = Path.Combine(dir, name);
             if (name == null)
                 name = fileDetails.FileName;
-            var expectedSize = (fileDetails.FileSize == 0) ? -1 : fileDetails.FileSize;
 
             using (var client = new WebClient())
             {
                 try
                 {
                     var downloadTask = client.DownloadFileTaskAsync(fileDetails.FileUrl, Path.Combine(dir, name));
-                    DateTime start = DateTime.Now;
-                    for (int i = 0; i < 30; i++)
+                    for (var i = 0; i < 30; i++)
                     {
                         await Task.Delay(1000);
                         if (downloadTask.IsCompleted)
@@ -239,12 +226,12 @@ namespace Torch.Utils.SteamWorkshopTools
         {
             Log.Info("Connected to Steam! Logging in '{0}'...", Username);
             if( Username == "anonymous" )
-                steamUser.LogOnAnonymous();
+                _steamUser.LogOnAnonymous();
             else
-                steamUser.LogOn(new SteamUser.LogOnDetails
+                _steamUser.LogOn(new SteamUser.LogOnDetails
                 {
                     Username = Username,
-                    Password = password
+                    Password = _password
                 });
         }
 
@@ -264,20 +251,20 @@ namespace Torch.Utils.SteamWorkshopTools
                 {
                     msg = "Unable to logon to Steam: This account is Steamguard protected.";
                     Log.Warn(msg);
-                    logonTaskCompletionSource.SetException(new Exception(msg));
+                    _logonTaskCompletionSource.SetException(new Exception(msg));
                     IsRunning = false;
                     return;
                 }
 
                 msg = $"Unable to logon to Steam: {callback.Result} / {callback.ExtendedResult}";
                 Log.Warn(msg);
-                logonTaskCompletionSource.SetException(new Exception(msg));
+                _logonTaskCompletionSource.SetException(new Exception(msg));
                 IsRunning = false;
                 return;
             }
             IsReady = true;
             Log.Info("Successfully logged on!");
-            logonTaskCompletionSource.SetResult(true);
+            _logonTaskCompletionSource.SetResult(true);
         }
 
         private void OnLoggedOff( SteamUser.LoggedOffCallback callback )

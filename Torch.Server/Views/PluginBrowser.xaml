@@ -5,7 +5,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Markdown.Xaml;assembly=Markdown.Xaml"
         xmlns:system="clr-namespace:System;assembly=mscorlib"
-        xmlns:views="clr-namespace:Torch.Server.Views"
         mc:Ignorable="d"
         Title="PluginBrowser" Height="400" Width="600"
         DataContext="{Binding RelativeSource={RelativeSource Self}}">

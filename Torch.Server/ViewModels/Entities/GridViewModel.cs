@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using Sandbox.Definitions;
 using Sandbox.Game.Entities;
 using Sandbox.Game.Entities.Cube;
-using Sandbox.ModAPI;
-using Torch.API.Managers;
 using Torch.Collections;
 using Torch.Server.ViewModels.Blocks;
 using VRage.Game;
@@ -15,7 +12,7 @@ namespace Torch.Server.ViewModels.Entities
 {
     public class GridViewModel : EntityViewModel, ILazyLoad
     {
-        private static readonly MyCubeBlockDefinition _fillerDefinition = new MyCubeBlockDefinition()
+        private static readonly MyCubeBlockDefinition FillerDefinition = new MyCubeBlockDefinition()
         {
             Id = new MyDefinitionId(typeof(MyObjectBuilder_DefinitionBase), "")
         };
@@ -58,10 +55,10 @@ namespace Torch.Server.ViewModels.Entities
         public GridViewModel(MyCubeGrid grid, EntityTreeViewModel tree) : base(grid, tree)
         {
             //DescriptiveName = $"{grid.DisplayName} ({grid.BlocksCount} blocks)";
-            Blocks.Add(_fillerDefinition, new MtObservableSortedDictionary<long, BlockViewModel>());
+            Blocks.Add(FillerDefinition, new MtObservableSortedDictionary<long, BlockViewModel>());
         }
 
-        private void Grid_OnBlockRemoved(Sandbox.Game.Entities.Cube.MySlimBlock obj)
+        private void Grid_OnBlockRemoved(MySlimBlock obj)
         {
             if (obj.FatBlock != null)
                 RemoveBlock(obj.FatBlock);
@@ -84,7 +81,7 @@ namespace Torch.Server.ViewModels.Entities
             group.Add(block.EntityId, new BlockViewModel(block, Tree));
         }
 
-        private void Grid_OnBlockAdded(Sandbox.Game.Entities.Cube.MySlimBlock obj)
+        private void Grid_OnBlockAdded(MySlimBlock obj)
         {
             var block = obj.FatBlock as MyTerminalBlock;
             if (block != null)

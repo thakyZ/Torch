@@ -15,12 +15,12 @@ namespace Torch.Collections
     {
         private delegate void DelInvokeHandler(TEvtHandle handler, object sender, TEvtArgs args);
 
-        private static readonly DelInvokeHandler _invokeDirectly;
+        private static readonly DelInvokeHandler InvokeDirectly;
         static MtObservableEvent()
         {
             MethodInfo invoke = typeof(TEvtHandle).GetMethod("Invoke", BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
             Debug.Assert(invoke != null, "No invoke method on handler type");
-            _invokeDirectly = (DelInvokeHandler)Delegate.CreateDelegate(typeof(DelInvokeHandler), invoke);
+            InvokeDirectly = (DelInvokeHandler)Delegate.CreateDelegate(typeof(DelInvokeHandler), invoke);
         }
 
         private static Dispatcher CurrentDispatcher => Dispatcher.FromThread(Thread.CurrentThread);
@@ -28,7 +28,7 @@ namespace Torch.Collections
 
         private event EventHandler<TEvtArgs> Event;
 
-        private int _observerCount = 0;
+        private int _observerCount;
 
         /// <summary>
         /// Determines if this event has an observers.
@@ -69,7 +69,7 @@ namespace Torch.Collections
             for (int i = invokeList.Length - 1; i >= 0; i--)
             {
                 var wrapper = (DispatcherDelegate)invokeList[i].Target;
-                if (wrapper._delegate.Equals(evt))
+                if (wrapper.Delegate.Equals(evt))
                 {
                     Event -= wrapper.Invoke;
                     _observerCount--;
@@ -81,21 +81,21 @@ namespace Torch.Collections
         private struct DispatcherDelegate
         {
             private readonly Dispatcher _dispatcher;
-            internal readonly TEvtHandle _delegate;
+            internal readonly TEvtHandle Delegate;
 
             internal DispatcherDelegate(TEvtHandle del)
             {
                 _dispatcher = CurrentDispatcher;
-                _delegate = del;
+                Delegate = del;
             }
 
             public void Invoke(object sender, TEvtArgs args)
             {
                 if (_dispatcher == null || _dispatcher == CurrentDispatcher)
-                    _invokeDirectly(_delegate, sender, args);
+                    InvokeDirectly(Delegate, sender, args);
                 else
                     // (Delegate) (object) == dual cast so that the compiler likes it
-                    _dispatcher.BeginInvoke((Delegate)(object)_delegate, DispatcherPriority.DataBind, sender, args);
+                    _dispatcher.BeginInvoke((Delegate)(object)Delegate, DispatcherPriority.DataBind, sender, args);
             }
         }
     }

@@ -6,7 +6,6 @@
              xmlns:local="clr-namespace:Torch.Server.Views.Blocks"
              xmlns:blocks="clr-namespace:Torch.Server.ViewModels.Blocks"
              xmlns:entities="clr-namespace:Torch.Server.Views.Entities"
-             xmlns:entities1="clr-namespace:Torch.Server.ViewModels.Entities"
              mc:Ignorable="d">
     <UserControl.DataContext>
         <blocks:BlockViewModel />

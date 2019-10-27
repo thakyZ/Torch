@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using NLog;
 
 namespace Torch.Utils
@@ -199,7 +196,7 @@ namespace Torch.Utils
             return GetEventsInternal(instance, eventName);
         }
 
-        private static readonly string[] _backingFieldForEvent = { "{0}", "<backing_store>{0}" };
+        private static readonly string[] BackingFieldForEvent = { "{0}", "<backing_store>{0}" };
         private static IEnumerable<Delegate> GetEventsInternal(object instance, string eventName, Type baseType = null)
         {
             BindingFlags bindingFlags = BindingFlags.NonPublic |
@@ -210,8 +207,8 @@ namespace Torch.Utils
             Type type = baseType;
             while (type != null && eventField == null)
             {
-                for (var i = 0; i < _backingFieldForEvent.Length && eventField == null; i++)
-                    eventField = type.GetField(string.Format(_backingFieldForEvent[i], eventName), bindingFlags);
+                for (var i = 0; i < BackingFieldForEvent.Length && eventField == null; i++)
+                    eventField = type.GetField(string.Format(BackingFieldForEvent[i], eventName), bindingFlags);
                 type = type.BaseType;
             }
             if (eventField?.GetValue(instance) is MulticastDelegate eventDel)

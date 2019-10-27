@@ -22,7 +22,7 @@ namespace Torch.Utils
         /// <summary>
         /// Expected parameters of this method, or null if any parameters are accepted.
         /// </summary>
-        public Type[] Parameters { get; set; } = null;
+        public Type[] Parameters { get; set; }
 
         /// <summary>
         /// Assembly qualified names of <see cref="Parameters"/>

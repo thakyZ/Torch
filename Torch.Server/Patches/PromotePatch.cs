@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using NLog;
 using Sandbox.Game.World;
-using Torch.Managers.PatchManager;
-using VRage.Game.ModAPI;
 using Torch.API.Managers;
+using Torch.Managers.PatchManager;
 using Torch.Server.Managers;
+using VRage.Game.ModAPI;
 
 namespace Torch.Patches
 {

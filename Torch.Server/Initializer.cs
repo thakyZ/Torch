@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
@@ -10,11 +9,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Threading;
 using NLog;
-using NLog.Targets;
 using Sandbox.Engine.Utils;
-using Torch.Utils;
 using VRage.FileSystem;
 
 namespace Torch.Server
@@ -25,8 +21,8 @@ namespace Torch.Server
         private bool _init;
         private const string STEAMCMD_DIR = "steamcmd";
         private const string STEAMCMD_ZIP = "temp.zip";
-        private static readonly string STEAMCMD_PATH = $"{STEAMCMD_DIR}\\steamcmd.exe";
-        private static readonly string RUNSCRIPT_PATH = $"{STEAMCMD_DIR}\\runscript.txt";
+        private const string STEAMCMD_PATH = STEAMCMD_DIR + "\\steamcmd.exe";
+        private const string RUNSCRIPT_PATH = STEAMCMD_DIR + "\\runscript.txt";
 
         private const string RUNSCRIPT = @"force_install_dir ../
 login anonymous
@@ -35,15 +31,9 @@ quit";
 
         private TorchConfig _config;
         private TorchServer _server;
-        private string _basePath;
 
         public TorchConfig Config => _config;
         public TorchServer Server => _server;
-
-        public Initializer(string basePath)
-        {
-            _basePath = basePath;
-        }
 
         public bool Initialize(string[] args)
         {
@@ -251,6 +241,8 @@ quit";
             }
         }
 
+        // ReSharper disable once UnusedMember.Local
+        // ReSharper disable once UnusedParameter.Local
         private void HandleException(object sender, UnhandledExceptionEventArgs e)
         {
             _server.FatalException = true;

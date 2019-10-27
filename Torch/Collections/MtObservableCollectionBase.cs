@@ -4,10 +4,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using Torch.Utils;
 
 namespace Torch.Collections
@@ -109,7 +106,7 @@ namespace Torch.Collections
             if (!NotificationsEnabled)
                 return;
             _propertyEventQueue.Enqueue(propName);
-            _flushEventQueue?.Change(_eventRaiseDelay, -1);
+            _flushEventQueue?.Change(EVENT_RAISE_DELAY, -1);
         }
 
         protected void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
@@ -118,11 +115,11 @@ namespace Torch.Collections
                 return;
             _collectionEventQueue.Enqueue(e);
             // In half a second, flush the events
-            _flushEventQueue?.Change(_eventRaiseDelay, -1);
+            _flushEventQueue?.Change(EVENT_RAISE_DELAY, -1);
         }
 
         private readonly Timer _flushEventQueue;
-        private const int _eventRaiseDelay = 50;
+        private const int EVENT_RAISE_DELAY = 50;
 
         private readonly ConcurrentQueue<NotifyCollectionChangedEventArgs> _collectionEventQueue =
             new ConcurrentQueue<NotifyCollectionChangedEventArgs>();

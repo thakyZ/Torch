@@ -1,14 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 using NLog;
-using NLog.Fluent;
 using Torch.API;
 using Torch.Collections;
 using Torch.Managers;
@@ -22,7 +16,7 @@ namespace Torch.Server.Managers
     /// </summary>
     public class EntityControlManager : Manager
     {
-        private static readonly Logger _log = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Log = LogManager.GetCurrentClassLogger();
 
         /// <summary>
         /// Creates an entity control manager for the given instance of torch
@@ -42,13 +36,13 @@ namespace Torch.Server.Managers
 
 #pragma warning disable 649
             [ReflectedGetter(Name = "Keys")]
-            private static readonly Func<ConditionalWeakTable<EntityViewModel, EntityControlViewModel>, ICollection<EntityViewModel>> _weakTableKeys;
+            private static readonly Func<ConditionalWeakTable<EntityViewModel, EntityControlViewModel>, ICollection<EntityViewModel>> WeakTableKeys;
 #pragma warning restore 649
 
             /// <summary>
             /// Warning: Creates a giant list, avoid if possible.
             /// </summary>
-            internal ICollection<EntityViewModel> Keys => _weakTableKeys(_models);
+            internal ICollection<EntityViewModel> Keys => WeakTableKeys(_models);
 
             internal EntityControlViewModel GetOrCreate(EntityViewModel evm)
             {
@@ -77,7 +71,7 @@ namespace Torch.Server.Managers
                 if (evm is T m)
                 {
                     var result = _factory(m);
-                    _log.Trace($"Model factory {_factory.Method} created {result} for {evm}");
+                    Log.Trace($"Model factory {_factory.Method} created {result} for {evm}");
                     return result;
                 }
                 return null;
@@ -90,6 +84,7 @@ namespace Torch.Server.Managers
         private readonly List<WeakReference<EntityViewModel>> _boundEntityViewModels = new List<WeakReference<EntityViewModel>>();
         private readonly ConditionalWeakTable<EntityViewModel, MtObservableList<EntityControlViewModel>> _boundViewModels = new ConditionalWeakTable<EntityViewModel, MtObservableList<EntityControlViewModel>>();
 
+        private const string MUST_MATCH_LAMBDA_TYPE = "Generic type must match lamda type";
         /// <summary>
         /// This factory will be used to create component models for matching entity models.
         /// </summary>
@@ -99,7 +94,7 @@ namespace Torch.Server.Managers
             where TEntityBaseModel : EntityViewModel
         {
             if (!typeof(TEntityBaseModel).IsAssignableFrom(modelFactory.Method.GetParameters()[0].ParameterType))
-                throw new ArgumentException("Generic type must match lamda type", nameof(modelFactory));
+                throw new ArgumentException(MUST_MATCH_LAMBDA_TYPE, nameof(modelFactory));
             lock (this)
             {
                 var factory = new ModelFactory<TEntityBaseModel>(modelFactory);
@@ -111,7 +106,7 @@ namespace Torch.Server.Managers
                     if (_boundEntityViewModels[i].TryGetTarget(out EntityViewModel target) &&
                         _boundViewModels.TryGetValue(target, out MtObservableList<EntityControlViewModel> components))
                     {
-                        if (target is TEntityBaseModel tent)
+                        if (target is TEntityBaseModel)
                             UpdateBinding(target, components);
                         i++;
                     }
@@ -130,7 +125,7 @@ namespace Torch.Server.Managers
             where TEntityBaseModel : EntityViewModel
         {
             if (!typeof(TEntityBaseModel).IsAssignableFrom(modelFactory.Method.GetParameters()[0].ParameterType))
-                throw new ArgumentException("Generic type must match lamda type", nameof(modelFactory));
+                throw new ArgumentException(MUST_MATCH_LAMBDA_TYPE, nameof(modelFactory));
             lock (this)
             {
                 for (var i = 0; i < _modelFactories.Count; i++)
@@ -158,7 +153,7 @@ namespace Torch.Server.Managers
             where TEntityComponentModel : EntityControlViewModel
         {
             if (!typeof(TEntityComponentModel).IsAssignableFrom(controlFactory.Method.GetParameters()[0].ParameterType))
-                throw new ArgumentException("Generic type must match lamda type", nameof(controlFactory));
+                throw new ArgumentException(MUST_MATCH_LAMBDA_TYPE, nameof(controlFactory));
             lock (this)
             {
                 _controlFactories.Add(controlFactory);
@@ -176,7 +171,7 @@ namespace Torch.Server.Managers
             where TEntityComponentModel : EntityControlViewModel
         {
             if (!typeof(TEntityComponentModel).IsAssignableFrom(controlFactory.Method.GetParameters()[0].ParameterType))
-                throw new ArgumentException("Generic type must match lamda type", nameof(controlFactory));
+                throw new ArgumentException(MUST_MATCH_LAMBDA_TYPE, nameof(controlFactory));
             lock (this)
             {
                 _controlFactories.Remove(controlFactory);
@@ -224,10 +219,10 @@ namespace Torch.Server.Managers
                     if (factory.Method.GetParameters()[0].ParameterType.IsInstanceOfType(model) &&
                         factory.DynamicInvoke(model) is Control result)
                     {
-                        _log.Trace($"Control factory {factory.Method} created {result}");
+                        Log.Trace($"Control factory {factory.Method} created {result}");
                         return result;
                     }
-            _log.Warn($"No control created for {model}");
+            Log.Warn($"No control created for {model}");
             return null;
         }
 

@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using NLog;
 using Sandbox.Engine.Multiplayer;
-using Torch.API;
-using Torch.API.Managers;
 using VRage.Network;
 using VRageMath;
 
@@ -12,8 +9,6 @@ namespace Torch.Managers
 {
     public static class NetworkManager
     {
-        private static Logger _log = LogManager.GetCurrentClassLogger();
-        
         #region Network Injection
 
         private static Dictionary<MethodInfo, Delegate> _delegateCache = new Dictionary<MethodInfo, Delegate>();

@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Sandbox.Game.Entities;
+using Torch.Collections;
 using VRage.Game.Entity;
 using VRage.Game.ModAPI;
-using System.Threading.Tasks;
-using Torch.Collections;
 
 namespace Torch.Server.ViewModels.Entities
 {

@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using NLog;
@@ -95,9 +93,9 @@ namespace Torch.API.WebAPI
             try
             {
                 path = path ?? $"Plugins\\{item.Name}.zip";
-                string relpath = Path.GetDirectoryName(path);
+                string relPath = Path.GetDirectoryName(path);
 
-                Directory.CreateDirectory(relpath);
+                Directory.CreateDirectory(relPath);
 
                 var h = await _client.GetAsync(string.Format(PLUGIN_QUERY, item.ID));
                 string res = await h.Content.ReadAsStringAsync();

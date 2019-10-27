@@ -1,20 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using NLog;
-using Torch.Collections;
 using Torch.Server.ViewModels;
 using Torch.Server.ViewModels.Blocks;
 using Torch.Server.ViewModels.Entities;
@@ -30,8 +16,6 @@ namespace Torch.Server.Views
     public partial class EntitiesControl : UserControl
     {
         public EntityTreeViewModel Entities { get; set; }
-
-        private static readonly Logger Log = LogManager.GetCurrentClassLogger();
 
         public EntitiesControl()
         {
@@ -88,8 +72,6 @@ namespace Torch.Server.Views
             var sort = (EntityTreeViewModel.SortEnum)SortCombo.SelectedIndex;
             
             var comparer = new EntityViewModel.Comparer(sort);
-
-            Task[] sortTasks = new Task[4];
 
             Entities.CurrentSort = sort;
             Entities.SortedCharacters.SetComparer(comparer);

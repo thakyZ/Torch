@@ -1,26 +1,14 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using NLog;
 using NLog.Targets.Wrappers;
-using Sandbox;
 using Torch.API;
-using Torch.API.Managers;
-using Torch.Server.Managers;
-using MessageBoxResult = System.Windows.MessageBoxResult;
 
 namespace Torch.Server
 {
@@ -57,7 +45,7 @@ namespace Torch.Server
             Plugins.BindServer(server);
             LoadConfig((TorchConfig)server.Config);
 
-            Themes.uiSource = this;
+            Themes.UiSource = this;
             Themes.SetConfig(_config);
             Title = $"{_config.InstanceName} - Torch {server.TorchVersion}, SE {server.GameVersion}";
             
@@ -113,7 +101,6 @@ namespace Torch.Server
 
         private void ConsoleText_OnTextChanged(object sender, TextChangedEventArgs args)
         {
-            var textBox = (RichTextBox) sender;
             if (_autoscrollLog)
                 ConsoleText.ScrollToEnd();
         }
@@ -169,22 +156,6 @@ namespace Torch.Server
                 _server.Stop();
 
             Process.GetCurrentProcess().Kill();
-        }
-
-        private void BtnRestart_Click(object sender, RoutedEventArgs e)
-        {
-            //MySandboxGame.Static.Invoke(MySandboxGame.ReloadDedicatedServerSession); use i
-        }
-
-        private void InstancePathBox_OnLostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
-        {
-            var name = ((TextBox)sender).Text;
-
-            if (!Directory.Exists(name))
-                return;
-
-            _config.InstancePath = name;
-            _server.Managers.GetManager<InstanceManager>().LoadInstance(_config.InstancePath);
         }
     }
 }

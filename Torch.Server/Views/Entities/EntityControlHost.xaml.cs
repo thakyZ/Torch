@@ -2,8 +2,8 @@
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using Torch.Server.Managers;
 using Torch.API.Managers;
+using Torch.Server.Managers;
 using Torch.Server.ViewModels.Entities;
 
 namespace Torch.Server.Views.Entities
@@ -19,7 +19,7 @@ namespace Torch.Server.Views.Entities
             DataContextChanged += OnDataContextChanged;
 
             ThemeControl.UpdateDynamicControls += UpdateResourceDict;
-            UpdateResourceDict(ThemeControl.currentTheme);
+            UpdateResourceDict(ThemeControl.CurrentTheme);
         }
 
         public void UpdateResourceDict(ResourceDictionary dictionary)
@@ -43,7 +43,7 @@ namespace Torch.Server.Views.Entities
 
         private void DataContext_OnPropertyChanged(object sender, PropertyChangedEventArgs pa)
         {
-            if (pa.PropertyName.Equals(EntityControlViewModel.SignalPropertyInvalidateControl))
+            if (pa.PropertyName.Equals(EntityControlViewModel.SIGNAL_PROPERTY_INVALIDATE_CONTROL))
                 RefreshControl();
             else if (pa.PropertyName.Equals(nameof(EntityControlViewModel.Hide)))
                 RefreshVisibility();
