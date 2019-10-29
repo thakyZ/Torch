@@ -9,20 +9,20 @@ namespace Torch
     /// </summary>
     public static class MySteamServiceWrapper
     {
-        private static readonly MethodInfo GetGameService;
+        private static readonly Type MySteamServiceType = Type.GetType("VRage.Steam.MySteamService, VRage.Steam");
+        private static readonly MethodInfo GetGameServiceMethod;
 
-        public static IMyGameService Static => (IMyGameService)GetGameService.Invoke(null, null);
+        public static IMyGameService Static => (IMyGameService)GetGameServiceMethod.Invoke(null, null);
 
         static MySteamServiceWrapper()
         {
-            var type = Type.GetType("VRage.Steam.MySteamService, VRage.Steam");
-            var prop = type.GetProperty("Static", BindingFlags.Static | BindingFlags.Public);
-            GetGameService = prop.GetGetMethod();
+            var prop = MySteamServiceType.GetProperty("Static", BindingFlags.Static | BindingFlags.Public);
+            GetGameServiceMethod = prop.GetGetMethod();
         }
 
         public static IMyGameService Init(bool dedicated, uint appId)
         {
-            return (IMyGameService)Activator.CreateInstance(Type.GetType("VRage.Steam.MySteamService, VRage.Steam"), dedicated, appId);
+            return (IMyGameService)Activator.CreateInstance(MySteamServiceType, dedicated, appId);
         }
     }
 }
