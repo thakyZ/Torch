@@ -17,10 +17,10 @@ namespace Torch.Server.ViewModels
         public MyOnlineModeEnum OnlineMode { get => _settings.OnlineMode; set => SetValue(ref _settings.OnlineMode, value); }
 
         [Torch.Views.Display(Description = "The multiplier for character inventory size.", Name = "Character Inventory Size", GroupName = "Multipliers")]
-        public float CharacterInventorySizeMultiplier { get => _settings.InventorySizeMultiplier; set => SetValue(ref _settings.InventorySizeMultiplier, value); }
+        public float InventorySizeMultiplier { get => _settings.InventorySizeMultiplier; set => SetValue(ref _settings.InventorySizeMultiplier, value); }
 
         [Torch.Views.Display(Description = "The multiplier for block inventory size.", Name = "Block Inventory Size", GroupName = "Multipliers")]
-        public float BlockInventorySizeMultiplier { get => _settings.BlocksInventorySizeMultiplier; set => SetValue(ref _settings.BlocksInventorySizeMultiplier, value); }
+        public float BlocksInventorySizeMultiplier { get => _settings.BlocksInventorySizeMultiplier; set => SetValue(ref _settings.BlocksInventorySizeMultiplier, value); }
 
         [Torch.Views.Display(Description = "The multiplier for assembler speed.", Name = "Assembler Speed", GroupName = "Multipliers")]
         public float AssemblerSpeedMultiplier { get => _settings.AssemblerSpeedMultiplier; set => SetValue(ref _settings.AssemblerSpeedMultiplier, value); }
@@ -54,6 +54,9 @@ namespace Torch.Server.ViewModels
 
         [Torch.Views.Display(Description = "Defines block limits mode.", Name = "Block Limits Mode", GroupName = "Block Limits")]
         public MyBlockLimitsEnabledEnum BlockLimitsEnabled { get => _settings.BlockLimitsEnabled; set => SetValue(ref _settings.BlockLimitsEnabled, value); }
+        
+        [Torch.Views.Display(Description = "Defines block limits mode.", Name = "Block Limits Mode", GroupName = "Block Limits")]
+        public int PiratePCU { get => _settings.PiratePCU; set => SetValue(ref _settings.PiratePCU, value); }
 
         [Torch.Views.Display(Description = "Enables possibility to remove grid remotely from the world by an author.", Name = "Enable Remote Grid Removal", GroupName = "Others")]
         public bool EnableRemoteBlockRemoval { get => _settings.EnableRemoteBlockRemoval; set => SetValue(ref _settings.EnableRemoteBlockRemoval, value); }
@@ -107,6 +110,9 @@ namespace Torch.Server.ViewModels
 
         [Torch.Views.Display(Description = "The multiplier for hacking speed.", Name = "Hacking Speed", GroupName = "Multipliers")]
         public float HackSpeedMultiplier { get => _settings.HackSpeedMultiplier; set => SetValue(ref _settings.HackSpeedMultiplier, value); }
+        
+        [Torch.Views.Display(Description = "Harvest ratio multiplier for drills.", Name = "Harvest Ratio Multiplier", GroupName = "Multipliers")]
+        public float HarvestRatioMultiplier { get => _settings.HarvestRatioMultiplier; set => SetValue(ref _settings.HarvestRatioMultiplier, value); }
 
         [Torch.Views.Display(Description = "Enables permanent death.", Name = "Permanent Death", GroupName = "Players")]
         public bool? PermanentDeath { get => _settings.PermanentDeath; set => SetValue(ref _settings.PermanentDeath, value); }
@@ -258,6 +264,24 @@ namespace Torch.Server.ViewModels
 
         [Torch.Views.Display(Description = "Defines character removal threshold for trash removal system. If player disconnects it will remove his character after this time.\n Set to 0 to disable.", Name = "Character Removal Threshold [mins]", GroupName = "Trash Removal")]
         public int PlayerCharacterRemovalThreshold { get => _settings.PlayerCharacterRemovalThreshold; set => SetValue(ref _settings.PlayerCharacterRemovalThreshold, value); }
+        
+        [Torch.Views.Display(Description = "Defines time in minutes after which inactive players will be kicked. 0 is off.", Name = "AFK Timeout", GroupName = "Trash Removal")]
+        public int AFKTimeountMin { get => _settings.AFKTimeountMin; set => SetValue(ref _settings.AFKTimeountMin, value); }
+        
+        [Torch.Views.Display(Description = "Defines time in hours after which inactive identities that do not own any grids will be removed. Set 0 to disable.", Name = "Remove Old Identities (h)", GroupName = "Trash Removal")]
+        public int RemoveOldIdentitiesH { get => _settings.RemoveOldIdentitiesH; set => SetValue(ref _settings.RemoveOldIdentitiesH, value); }
+        
+        [Torch.Views.Display(Description = "Defines time in minutes after which grids will be stopped if far from player. Set 0 to disable.", Name = "Stop Grids Period (m)", GroupName = "Trash Removal")]
+        public int StopGridsPeriodMin { get => _settings.StopGridsPeriodMin; set => SetValue(ref _settings.StopGridsPeriodMin, value); }
+        
+        [Torch.Views.Display(Description = "Only voxel chunks that have been modified longer time age may be reverted.", Name = "Voxel age (min)", GroupName = "Trash Removal")]
+        public int VoxelAgeThreshold { get => _settings.VoxelAgeThreshold; set => SetValue(ref _settings.VoxelAgeThreshold, value); }
+        
+        [Torch.Views.Display(Description = "Only voxel chunks that are further from any grid will be reverted.", Name = "Distance voxel from grid (m)", GroupName = "Trash Removal")]
+        public float VoxelGridDistanceThreshold { get => _settings.VoxelGridDistanceThreshold; set => SetValue(ref _settings.VoxelGridDistanceThreshold, value); }
+        
+        [Torch.Views.Display(Description = "Only voxel chunks that are further from player will be reverted.", Name = "Distance voxel from player (m)", GroupName = "Trash Removal")]
+        public float VoxelPlayerDistanceThreshold { get => _settings.VoxelPlayerDistanceThreshold; set => SetValue(ref _settings.VoxelPlayerDistanceThreshold, value); }
 
         [Torch.Views.Display(Description = "Sets optimal distance in meters when spawning new players near others.", Name = "Optimal Spawn Distance", GroupName = "Players")]
         public float OptimalSpawnDistance { get => _settings.OptimalSpawnDistance; set => SetValue(ref _settings.OptimalSpawnDistance, value); }
@@ -287,7 +311,7 @@ namespace Torch.Server.ViewModels
         public float DepositsCountCoefficient { get => _settings.DepositsCountCoefficient; set => SetValue(ref _settings.DepositsCountCoefficient, value); }
         
         [Torch.Views.Display(Description = "Resource deposit size denominator for generated world content (voxel generator version > 2).", Name = "Deposit Size Denominator", GroupName = "Environment")]
-        public float DepositSideDenominator { get => _settings.DepositSizeDenominator; set => SetValue(ref _settings.DepositSizeDenominator, value); }
+        public float DepositSizeDenominator { get => _settings.DepositSizeDenominator; set => SetValue(ref _settings.DepositSizeDenominator, value); }
         
         [Torch.Views.Display(Description = "Enables economy features.", Name = "Enable Economy", GroupName = "NPCs")]
         public bool EnableEconomy { get => _settings.EnableEconomy; set => SetValue(ref _settings.EnableEconomy, value); }

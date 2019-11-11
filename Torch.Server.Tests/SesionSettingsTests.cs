@@ -9,14 +9,14 @@ using Xunit;
 
 namespace Torch.Server.Tests
 {
-    public class TorchServerSessionSettingsTest
+    public class SesionSettingsTests
     {
         public static PropertyInfo[] ViewModelProperties = typeof(SessionSettingsViewModel).GetProperties(BindingFlags.Public | BindingFlags.Instance);
         public static IEnumerable<object[]> ModelFields = typeof(MyObjectBuilder_SessionSettings).GetFields(BindingFlags.Public | BindingFlags.Instance).Select(x => new object[] { x });
 
         [Theory]
         [MemberData(nameof(ModelFields))]
-        public void MissingPropertyTest(FieldInfo modelField)
+        public void PropertyShouldExist(FieldInfo modelField)
         {
             // Ignore fields that aren't applicable to SE
             if (modelField.GetCustomAttribute<GameRelationAttribute>()?.RelatedTo == Game.MedievalEngineers)

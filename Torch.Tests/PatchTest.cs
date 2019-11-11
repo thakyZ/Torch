@@ -22,28 +22,28 @@ namespace Torch.Tests
 
         private static readonly PatchManager _patchContext = new PatchManager(null);
 
-        [Theory]
+        //[Theory]
         [MemberData(nameof(Prefixes))]
         public void TestPrefix(TestBootstrap runner)
         {
             runner.TestPrefix();
         }
 
-        [Theory]
+        //[Theory]
         [MemberData(nameof(Transpilers))]
         public void TestTranspile(TestBootstrap runner)
         {
             runner.TestTranspile();
         }
 
-        [Theory]
+        //[Theory]
         [MemberData(nameof(Suffixes))]
         public void TestSuffix(TestBootstrap runner)
         {
             runner.TestSuffix();
         }
 
-        [Theory]
+        //[Theory]
         [MemberData(nameof(Combo))]
         public void TestCombo(TestBootstrap runner)
         {
@@ -51,7 +51,7 @@ namespace Torch.Tests
         }
 
 
-        [Fact]
+        //[Fact]
         public void TestTryCatchNop()
         {
             var ctx = _patchContext.AcquireContext();
@@ -63,7 +63,7 @@ namespace Torch.Tests
             _patchContext.Commit();
         }
 
-        [Fact]
+        //[Fact]
         public void TestTryCatchCancel()
         {
             var ctx = _patchContext.AcquireContext();
@@ -134,7 +134,7 @@ namespace Torch.Tests
             }
         }
 
-        [Fact]
+        //[Fact]
         public void TestAsyncNop()
         {
             var candidates = new List<Type>();

@@ -127,7 +127,15 @@ namespace Torch.Managers
 
         private static bool PrefixLogFormatted(MyLog __instance, MyLogSeverity severity, string format, object[] args)
         {
-            Log.Log(LogLevelFor(severity), PrepareLog(__instance).AppendFormat(format, args));
+            // Sometimes this is called with a pre-formatted string and no args
+            // and causes a crash when the format string contains braces
+            var sb = PrepareLog(__instance);
+            if (args != null && args.Length > 0)
+                sb.AppendFormat(format, args);
+            else
+                sb.Append(format);
+
+            Log.Log(LogLevelFor(severity), sb);
             return false;
         }
 
