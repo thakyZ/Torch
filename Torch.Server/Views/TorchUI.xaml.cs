@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
@@ -6,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
+using System.Xml.Serialization;
 using NLog;
 using NLog.Targets.Wrappers;
 using Torch.API;
@@ -17,6 +19,10 @@ namespace Torch.Server
     /// </summary>
     public partial class TorchUI : Window
     {
+        private const string UI_CONFIG = "ui.cfg";
+
+        private readonly Logger Log = LogManager.GetCurrentClassLogger();
+        
         private TorchServer _server;
         private TorchConfig _config;
 
@@ -24,9 +30,13 @@ namespace Torch.Server
 
         public TorchUI(TorchServer server)
         {
-            WindowStartupLocation = WindowStartupLocation.CenterScreen;
-            Width = 800;
-            Height = 600;
+            if (!TryLoadLocation())
+            {
+                WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                Width = 800;
+                Height = 600;
+            }
+            
             _config = (TorchConfig)server.Config;
             _server = server;
             //TODO: data binding for whole server
@@ -34,11 +44,6 @@ namespace Torch.Server
             InitializeComponent();
 
             AttachConsole();
-
-            //Left = _config.WindowPosition.X;
-            //Top = _config.WindowPosition.Y;
-            //Width = _config.WindowSize.X;
-            //Height = _config.WindowSize.Y;
 
             Chat.BindServer(server);
             PlayerList.BindServer(server);
@@ -121,10 +126,6 @@ namespace Torch.Server
                 return;
 
             _config = config;
-            Dispatcher.Invoke(() =>
-            {
-                //InstancePathBox.Text = config.InstancePath;
-            });
         }
 
         private void BtnStart_Click(object sender, RoutedEventArgs e)
@@ -159,12 +160,76 @@ namespace Torch.Server
                 if (_server?.State == ServerState.Running)
                     _server.Stop();
 
+                SaveLocation();
+                
                 Process.GetCurrentProcess().Kill();
             }
             else
             {
                 e.Cancel = true;
             }
+        }
+
+        private bool TryLoadLocation()
+        {
+            if (!File.Exists(UI_CONFIG))
+                return false;
+
+            try
+            {
+                WindowStartupLocation = WindowStartupLocation.Manual;
+                using (var s = File.OpenRead(UI_CONFIG))
+                {
+                    var pos = (WindowPos)new XmlSerializer(typeof(WindowPos)).Deserialize(s);
+                    Width = pos.Width;
+                    Height = pos.Height;
+                    Left = pos.Left;
+                    Top = pos.Top;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error loading window location.");
+                return false;
+            }
+
+            return true;
+        }
+
+        private void SaveLocation()
+        {
+            var pos = new WindowPos(Left, Top, Width, Height);
+
+            try
+            {
+                using (var s = File.Create(UI_CONFIG))
+                    new XmlSerializer(typeof(WindowPos)).Serialize(s, pos);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error saving window location.");
+            }
+        }
+        
+        /// <summary>
+        /// XML serializable class to store window location and size
+        /// </summary>
+        public class WindowPos
+        {
+            public double Left { get; set; }
+            public double Top { get; set; }
+            public double Width { get; set; }
+            public double Height { get; set; }
+            
+            public WindowPos(double left, double top, double width, double height)
+            {
+                Left = left;
+                Top = top;
+                Width = width;
+                Height = height;
+            }
+            
+            public WindowPos() { }
         }
     }
 }
