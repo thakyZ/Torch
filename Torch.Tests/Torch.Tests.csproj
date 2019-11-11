@@ -72,7 +72,6 @@
     <Compile Include="ReflectionTestManager.cs" />
     <Compile Include="ReflectionSystemTest.cs" />
     <Compile Include="TestUtils.cs" />
-    <Compile Include="TorchReflectionTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Torch.API\Torch.API.csproj">

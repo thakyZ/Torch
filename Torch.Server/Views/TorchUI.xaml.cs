@@ -152,10 +152,19 @@ namespace Torch.Server
 
             //_config.Save(); //you idiot
 
-            if (_server?.State == ServerState.Running)
-                _server.Stop();
+            var result = MessageBox.Show("Are you sure you want to exit?", "Exit Torch?", MessageBoxButton.YesNo);
 
-            Process.GetCurrentProcess().Kill();
+            if (result == MessageBoxResult.Yes)
+            {
+                if (_server?.State == ServerState.Running)
+                    _server.Stop();
+
+                Process.GetCurrentProcess().Kill();
+            }
+            else
+            {
+                e.Cancel = true;
+            }
         }
     }
 }

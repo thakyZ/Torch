@@ -27,7 +27,7 @@ namespace Torch.Tests
         #region Binding
         [Theory]
         [MemberData(nameof(Getters))]
-        public void TestBindingGetter(ReflectionTestManager.FieldRef field)
+        public void GetterTargetShouldExist(ReflectionTestManager.FieldRef field)
         {
             if (field.Field == null)
                 return;
@@ -38,7 +38,7 @@ namespace Torch.Tests
 
         [Theory]
         [MemberData(nameof(Setters))]
-        public void TestBindingSetter(ReflectionTestManager.FieldRef field)
+        public void SetterTargetShouldExist(ReflectionTestManager.FieldRef field)
         {
             if (field.Field == null)
                 return;
@@ -49,7 +49,7 @@ namespace Torch.Tests
 
         [Theory]
         [MemberData(nameof(Invokers))]
-        public void TestBindingInvoker(ReflectionTestManager.FieldRef field)
+        public void InvokerTargetShouldExist(ReflectionTestManager.FieldRef field)
         {
             if (field.Field == null)
                 return;
@@ -60,7 +60,7 @@ namespace Torch.Tests
 
         [Theory]
         [MemberData(nameof(MemberInfo))]
-        public void TestBindingMemberInfo(ReflectionTestManager.FieldRef field)
+        public void MemberBindingShouldExist(ReflectionTestManager.FieldRef field)
         {
             if (field.Field == null)
                 return;
@@ -71,7 +71,7 @@ namespace Torch.Tests
 
         [Theory]
         [MemberData(nameof(Events))]
-        public void TestBindingEvents(ReflectionTestManager.FieldRef field)
+        public void EventTargetShouldExist(ReflectionTestManager.FieldRef field)
         {
             if (field.Field == null)
                 return;
