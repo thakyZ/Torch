@@ -62,7 +62,18 @@ namespace Torch.Utils
         {
             if (grid.BigOwners.Count == 0 || grid.BigOwners[0] == 0)
                 return "nobody";
-            return MyMultiplayer.Static.GetMemberName(MySession.Static.Players.TryGetSteamId(grid.BigOwners[0]));
+
+            var identityId = grid.BigOwners[0];
+
+            if (MySession.Static.Players.IdentityIsNpc(identityId))
+            {
+                var identity = MySession.Static.Players.TryGetIdentity(identityId);
+                return identity.DisplayName;
+            }
+            else
+            {
+                return MyMultiplayer.Static.GetMemberName(MySession.Static.Players.TryGetSteamId(identityId));   
+            }
         }
     }
 }
