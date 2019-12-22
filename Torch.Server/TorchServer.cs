@@ -14,6 +14,7 @@ using Sandbox;
 using Sandbox.Engine.Networking;
 using Sandbox.Game.Multiplayer;
 using Sandbox.Game.World;
+using ServerAnalytics;
 using Torch.API;
 using Torch.API.Managers;
 using Torch.API.Session;
@@ -101,6 +102,8 @@ namespace Torch.Server
         public string InstancePath => Config?.InstancePath;
 
         public int OnlinePlayers { get => _players; private set => SetValue(ref _players, value); }
+
+        internal Analytics Analytics { get; private set; }
 
         /// <inheritdoc />
         public override void Init()
@@ -200,6 +203,11 @@ namespace Torch.Server
                 _multiplayerManagerDedicated = CurrentSession.Managers.GetManager<MultiplayerManagerDedicated>();
                 CurrentSession.Managers.GetManager<CommandManager>().RegisterCommandModule(typeof(WhitelistCommands));
                 ModCommunication.Register();
+                if (!Config.OptOutAnalytics)
+                {
+                    Analytics = new Analytics();
+                    Analytics.Init(this, _multiplayerManagerDedicated);
+                }
             }
         }
 

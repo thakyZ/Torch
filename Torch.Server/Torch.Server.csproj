@@ -383,6 +383,10 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ServerAnalytics\ServerAnalytics.csproj">
+      <Project>{e2ec38f6-9aa7-4fd2-bf39-41ae70856f37}</Project>
+      <Name>ServerAnalytics</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Torch.API\Torch.API.csproj">
       <Project>{fba5d932-6254-4a1e-baf4-e229fa94e3c2}</Project>
       <Name>Torch.API</Name>

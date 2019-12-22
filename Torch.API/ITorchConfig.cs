@@ -25,6 +25,8 @@ namespace Torch
         string TestPlugin { get; set; }
         bool DisconnectOnRestart { get; set; }
 
+        bool OptOutAnalytics { get; set; }
+
         bool Save(string path = null);
     }
 }

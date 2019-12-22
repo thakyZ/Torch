@@ -13,8 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Torch.Server", "Torch.Serve
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7AD02A71-1D4C-48F9-A8C1-789A5512424F}"
 	ProjectSection(SolutionItems) = preProject
-		NLog.config = NLog.config
 		NLog-user.config = NLog-user.config
+		NLog.config = NLog.config
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Torch.Tests", "Torch.Tests\Torch.Tests.csproj", "{C3C8B671-6AD1-44AA-A8DA-E0C0DC0FEDF5}"
@@ -29,6 +29,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Versioning", "Versioning", 
 	EndProjectSection
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Torch.Mod", "Torch.Mod\Torch.Mod.shproj", "{3CE4D2E9-B461-4F19-8233-F87E0DFDDD74}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerAnalytics", "ServerAnalytics\ServerAnalytics.csproj", "{E2EC38F6-9AA7-4FD2-BF39-41AE70856F37}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -80,6 +82,14 @@ Global
 		{632E78C0-0DAC-4B71-B411-2F1B333CC310}.Debug|x64.ActiveCfg = Debug|x64
 		{632E78C0-0DAC-4B71-B411-2F1B333CC310}.Release|Any CPU.ActiveCfg = Release|x64
 		{632E78C0-0DAC-4B71-B411-2F1B333CC310}.Release|x64.ActiveCfg = Release|x64
+		{E2EC38F6-9AA7-4FD2-BF39-41AE70856F37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2EC38F6-9AA7-4FD2-BF39-41AE70856F37}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E2EC38F6-9AA7-4FD2-BF39-41AE70856F37}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E2EC38F6-9AA7-4FD2-BF39-41AE70856F37}.Debug|x64.Build.0 = Debug|Any CPU
+		{E2EC38F6-9AA7-4FD2-BF39-41AE70856F37}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E2EC38F6-9AA7-4FD2-BF39-41AE70856F37}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E2EC38F6-9AA7-4FD2-BF39-41AE70856F37}.Release|x64.ActiveCfg = Release|Any CPU
+		{E2EC38F6-9AA7-4FD2-BF39-41AE70856F37}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
