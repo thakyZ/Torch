@@ -20,7 +20,7 @@ node {
 	}
 
 	stage('Acquire SE') {
-                bat 'rmdir /S C:/Steam/'
+                bat 'rmdir /S C:\Steam\'
 		bat 'powershell -File Jenkins/jenkins-grab-se.ps1'
 		bat 'IF EXIST GameBinaries RMDIR GameBinaries'
 		bat 'mklink /J GameBinaries "C:/Steam/Data/DedicatedServer64/"'
